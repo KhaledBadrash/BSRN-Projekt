@@ -1,0 +1,2 @@
+print("Welcome to Bingo!")
+
