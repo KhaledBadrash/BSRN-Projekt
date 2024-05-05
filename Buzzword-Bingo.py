@@ -1,5 +1,3 @@
-import math
-
 print("Welcome to Bingo!")
 print("Test")
 print("Test2")
@@ -8,11 +6,14 @@ print("Test4")
 
 import random
 
-w = random.randint(1, 50)
-print(w)
 
-with open("C:\\Users\\M02Mu\\Documents - Kopie\\2. Semester\\BSRN\\buzzwords.txt", "r") as file:
-    content = file.readlines()
-    print(content[w-1])
+def buzzwords():
+    w = random.randint(1, 50)  #Zufallszahl-Generator
+    print(w)
+    with open("C:\\Users\\M02Mu\\Documents - Kopie\\2. Semester\\BSRN\\buzzwords.txt", "r") as file:  #Datei
+        content = file.readlines()  #Datei lesen
+    return content[w - 1]  # Wort aus einer zufälligen Zeile, bestimmt vom Generator
 
 
+for buzzword in range(50): print(buzzwords()) #zum Karten erstellen (test)
+    print(buzzwords())
