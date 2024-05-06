@@ -15,6 +15,11 @@ def buzzwords():
     return content[w - 1]  # Wort aus einer zufälligen Zeile, bestimmt vom Generator
 
 
-for buzzword in range(50): #zum Karten erstellen (test)
+for buzzword in range(25): #zum Karten erstellen (test)
+   i = 0
+   i = i + 1
+   print(buzzwords())
 
-    print(buzzwords())
+
+
+print()
