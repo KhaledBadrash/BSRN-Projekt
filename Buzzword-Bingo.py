@@ -22,4 +22,4 @@ for buzzword in range(25): #zum Karten erstellen (test)
 
 
 
-print()
+print("Github")
