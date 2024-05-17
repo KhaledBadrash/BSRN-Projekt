@@ -9,6 +9,7 @@ import Log
 #   return content[w]  # Wort aus einer zufälligen Zeile, bestimmt vom Generator
 #for buzzword in range(25): #zum Karten erstellen (test) / Es wird genau 25 mal ramdom ein Wort aus der Textdatei geprintet
 #   print(buzzwords())
-bspLog = Log.Log()
-bspLog.logEintrag()
+bspLog = Log.log()
+bspLog.logeintrag()
+print(bspLog.logeintrag())
 
