@@ -5,8 +5,8 @@ class log:
         self.date = self.now.strftime("%d/%m/%Y %H:%M:%S")
         pass
 
-    def logeintrag(self):
+    def logeintrag(self,nachricht):
         self.now = datetime.now()
         with open(r'C:\Users\khaled\PycharmProjects\BSRN-Projekt\Protokoll', 'a') as file:
-            return file.write(self.date + '\n')
+            return file.write(nachricht+' '+self.date + '\n')
         pass
