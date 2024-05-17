@@ -11,5 +11,5 @@ import Log
 #   print(buzzwords())
 bspLog = Log.log()
 bspLog.logeintrag()
-print(bspLog.logeintrag())
+
 

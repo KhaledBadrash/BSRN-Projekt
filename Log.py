@@ -8,5 +8,5 @@ class log:
     def logeintrag(self):
         self.now = datetime.now()
         with open(r'C:\Users\khaled\PycharmProjects\BSRN-Projekt\Protokoll', 'a') as file:
-            return file.write(self.date)
+            return file.write(self.date + '\n')
         pass
