@@ -6,7 +6,8 @@ print("Test4")
 
 import random
 
-
+print("Wie viele Spieler?")
+anzSpieler = input()
 def buzzwords():
     w = random.randint(1, 50)  #Zufallszahl-Generator
     print(w)
@@ -18,8 +19,5 @@ def buzzwords():
 for buzzword in range(25): #zum Karten erstellen (test)
    i = 0
    i = i + 1
-   print(buzzwords())
 
-
-
-print()
+print(buzzword)
