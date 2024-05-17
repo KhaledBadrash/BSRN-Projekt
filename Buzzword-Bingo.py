@@ -1,7 +1,7 @@
 import random
 import Log
 startlog = Log.log()
-startlog.logeintrag('Start')
+startlog.logeintragstart()
 #Auskommentiert bis vorarbeit geleistet
 #def buzzwords():
 #    w = random.randint(0, 49)  #Zufallszahl-Generator
@@ -12,6 +12,7 @@ startlog.logeintrag('Start')
 #for buzzword in range(25): #zum Karten erstellen (test) / Es wird genau 25 mal ramdom ein Wort aus der Textdatei geprintet
 #   print(buzzwords())
 bspLog = Log.log()
-bspLog.logeintrag('Step')
+bspLog.logeintragstep()
+
 
 
