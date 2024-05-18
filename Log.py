@@ -7,12 +7,12 @@ class log:
 
     def logeintragstep(self):
         self.now = datetime.now()
-        with open(r'C:\Users\khaled\PycharmProjects\BSRN-Projekt\Protokoll', 'a') as file:
+        with open(r'Protokoll git', 'a') as file:
             return file.write('Step: '+self.date + '\n')
         pass
 
     def logeintragstart(self):
         self.now = datetime.now()
-        with open(r'C:\Users\khaled\PycharmProjects\BSRN-Projekt\Protokoll', 'a') as file:
+        with open(r'Protokoll git', 'a') as file:
             return file.write('Start: '+self.date + '\n')
         pass
