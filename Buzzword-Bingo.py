@@ -1,7 +1,10 @@
-import random
 import Log
+
+feldG = int(input('Geben Sie die Groeße des Spielfeldes an: '))
+
 startlog = Log.log()
 startlog.logeintragstart()
+
 #Auskommentiert bis vorarbeit geleistet
 #def buzzwords():
 #    w = random.randint(0, 49)  #Zufallszahl-Generator
