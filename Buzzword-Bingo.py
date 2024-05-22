@@ -1,5 +1,6 @@
 import Log
 
+print('Herlich Willkommen zu Buzzword-Bingo!')
 eingabeBreite = int(input('Geben Sie die Breite des Spielfeldes an -xaxis: '))
 eingabeHoehe = int(input('Geben Sie die Hoehe des Spielfeldes an -yaxis:  '))
 
