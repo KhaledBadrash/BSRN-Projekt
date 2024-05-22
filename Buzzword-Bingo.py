@@ -1,6 +1,14 @@
 import Log
 
-feldG = int(input('Geben Sie die Groeße des Spielfeldes an: '))
+eingabeBreite = int(input('Geben Sie die Breite des Spielfeldes an -xaxis: '))
+eingabeHoehe = int(input('Geben Sie die Hoehe des Spielfeldes an -yaxis:  '))
+
+#Falls Eingabe von Hoehe und Breite nicht gleich ist
+if eingabeHoehe != eingabeBreite:
+    print('Beide Eingaben muessen gleich sein!')
+
+if eingabeHoehe == eingabeBreite:
+    print()
 
 startlog = Log.log()
 startlog.logeintragstart()
