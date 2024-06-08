@@ -1,4 +1,6 @@
 import Log
+import requests
+import random
 
 print('Herlich Willkommen zu Buzzword-Bingo!')
 eingabeBreite = int(input('Geben Sie die Breite des Spielfeldes an -xaxis: '))
@@ -13,18 +15,27 @@ if eingabeHoehe == eingabeBreite:
 
 startlog = Log.log()
 startlog.logeintragstart()
-
-#Auskommentiert bis vorarbeit geleistet
-#def buzzwords():
-#    w = random.randint(0, 49)  #Zufallszahl-Generator
-#   print(w)
-#   with open("Textdatei", "r") as file:  #Textdatei aus Github
-#       content = file.readlines()  #Datei lesen
-#   return content[w]  # Wort aus einer zufälligen Zeile, bestimmt vom Generator
-#for buzzword in range(25): #zum Karten erstellen (test) / Es wird genau 25 mal ramdom ein Wort aus der Textdatei geprintet
-#   print(buzzwords())
 bspLog = Log.log()
 bspLog.logeintragstep()
+
+
+#Um Wörter zufällig zu generieren
+def zufaellige_woerter(url, num_words):
+    # Wörter aus der Datei lesen
+    response = requests.get(url)
+    words = response.text.splitlines()
+
+# Prüfen, ob genügend Wörter in der Datei vorhanden sind
+    if num_words > len(words):
+        raise ValueError("Es gibt nicht genügend Wörter in der Datei.")
+
+    # Zufällige Wörter auswählen, ohne Duplikate
+    random_words = random.sample(words, num_words)
+    return random_words
+
+# Pfad zur Datei und Anzahl der gewünschten Wörter
+file_url = 'https://raw.githubusercontent.com/KhaledBadrash/BSRN-Projekt/main/Textdatei'
+num_words = 25  # Beispiel: 25 zufällige Wörter
 
 
 
