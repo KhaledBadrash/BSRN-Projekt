@@ -1,6 +1,7 @@
 import Log
 import requests
 import random
+import multiprocessing as mp
 
 print('Herlich Willkommen zu Buzzword-Bingo!')
 eingabeBreite = int(input('Geben Sie die Breite des Spielfeldes an -xaxis: '))
@@ -18,24 +19,34 @@ startlog.logeintragstart()
 bspLog = Log.log()
 bspLog.logeintragstep()
 
+anz_spieler = 0
+feld_gr = 0
+processes_spieler = []
+num_words = 25  # Beispiel: 25 zufällige Wörter
 
-#Um Wörter zufällig zu generieren
-def zufaellige_woerter(url, num_words):
+# Pfad zur Datei und Anzahl der gewünschten Wörter
+file_url = 'https://raw.githubusercontent.com/KhaledBadrash/BSRN-Projekt/main/Textdatei'
+
+def bingo_cards(url, anz_woerter):
     # Wörter aus der Datei lesen
     response = requests.get(url)
     words = response.text.splitlines()
 
-# Prüfen, ob genügend Wörter in der Datei vorhanden sind
-    if num_words > len(words):
-        raise ValueError("Es gibt nicht genügend Wörter in der Datei.")
-
     # Zufällige Wörter auswählen, ohne Duplikate
-    random_words = random.sample(words, num_words)
+    random_words = random.sample(words, anz_woerter)
     return random_words
 
-# Pfad zur Datei und Anzahl der gewünschten Wörter
-file_url = 'https://raw.githubusercontent.com/KhaledBadrash/BSRN-Projekt/main/Textdatei'
-num_words = 25  # Beispiel: 25 zufällige Wörter
+
+unique_words = bingo_cards(file_url, num_words)
+print("Zufällige Wörter:", unique_words)
+
+for _ in range(anz_spieler):
+    #erstelle Karte
+    #IPC pro Spieler ein Prozess
+    p = mp.Process(target=bingo_cards, args=(file_url, num_words))
+    p.start()
+    processes_spieler.append(p)
+    print("Spieler ", _ + 1, " hat das Spiel beigetreten: ", {p.pid})
 
 
 
