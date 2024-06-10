@@ -11,12 +11,15 @@ bspLog = Log.log()
 bspLog.logeintragstep()
 
 #Beginn des Spieles
-
 print("Willkommen im Buzzword-Bingospiel.")
 
 #Abfrage
-anz_spieler = int(input("Geben Sie die Anzahl der Spieler an:"))
-feld_gr = int(input("Geben Sie die Größe ihres Spielfeldes: \n 1 = 3X3 \n 2 = 5X5 \n 3 = 7X7"))
+variable = input("Neue Runde? \n [Y/N]: ")
+if variable == "Y" or variable == "y":
+    anz_spieler = int(input("Geben Sie die Anzahl der Spieler an:"))
+    feld_gr = int(input("Geben Sie die Größe ihres Spielfeldes: \n 1 = 3X3 \n 2 = 5X5 \n 3 = 7X7"))
+elif variable == "N" or variable == "n":
+    print("Das Spiel ist beendet")
 processes_spieler = []
 num_words = 25  # Beispiel: 25 zufällige Wörter
 
