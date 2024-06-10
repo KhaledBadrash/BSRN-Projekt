@@ -18,13 +18,17 @@ variable = input("Neue Runde? \n [Y/N]: ")
 if variable == "Y" or variable == "y":
     anz_spieler = int(input("Geben Sie die Anzahl der Spieler an:"))
     feld_gr = int(input("Geben Sie die Größe ihres Spielfeldes: \n 1 = 3X3 \n 2 = 5X5 \n 3 = 7X7"))
-elif variable == "N" or variable == "n":
+
+elif variable == "N" or variable == "n": #elif else if
     print("Das Spiel ist beendet")
+
+    #Beginn von der Interprosesskomunikation
 processes_spieler = []
-num_words = 25  # Beispiel: 25 zufällige Wörter
+#if abfrage für geldgr 1,2,3,4 also 5 möglichkeiten
+num_words = 25 #testvariable für 5x5  # Beispiel: 25 zufällige Wörter
 
 # Pfad zur Datei und Anzahl der gewünschten Wörter
-file_url = input("-wordfile: ")
+file_url = input("Geben Sie den gewünschten Pfad an -wordfile: ")
 
 def bingo_cards(url, anz_woerter):
     # Wörter aus der Datei lesen
