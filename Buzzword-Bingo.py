@@ -11,6 +11,7 @@ bspLog = Log.log()
 bspLog.logeintragstep()
 
 #Beginn des Spieles
+
 print("Willkommen im Buzzword-Bingospiel.")
 
 #Abfrage
