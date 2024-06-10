@@ -28,7 +28,7 @@ processes_spieler = []
 num_words = 25 #testvariable für 5x5  # Beispiel: 25 zufällige Wörter
 
 # Pfad zur Datei und Anzahl der gewünschten Wörter
-file_url = input("Geben Sie den gewünschten Pfad an -wordfile: ")
+file_url = input("Geben Sie den gewünschten Pfad an -wordfile: ")#https://raw.githubusercontent.com/KhaledBadrash/BSRN-Projekt/main/Textdatei
 
 def bingo_cards(url, anz_woerter):
     # Wörter aus der Datei lesen
