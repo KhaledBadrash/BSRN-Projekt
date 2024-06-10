@@ -9,7 +9,11 @@ startlog = Log.log()
 startlog.logeintragstart()
 bspLog = Log.log()
 bspLog.logeintragstep()
+
+#Beginn des Spieles
 print("Willkommen im Buzzword-Bingospiel.")
+
+#Abfrage
 anz_spieler = int(input("Geben Sie die Anzahl der Spieler an:"))
 feld_gr = int(input("Geben Sie die Größe ihres Spielfeldes: \n 1 = 3X3 \n 2 = 5X5 \n 3 = 7X7"))
 processes_spieler = []
