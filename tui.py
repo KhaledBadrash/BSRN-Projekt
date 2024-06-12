@@ -4,9 +4,11 @@ from textual.widgets import Static, Button
 import argparse
 import os  # Importiert das os-Modul für Betriebssystemfunktionen
 import self
-                # noch anschauen :fork() , TUI RASTER, pipes abstimmen
+
+
+# noch anschauen :fork() , TUI RASTER, pipes abstimmen
 # Definiert eine Klasse für TestButtons, die auf der Bingokarte angezeigt werden
-class TestButton(Static): #Konstruktor
+class TestButton(Static):  #Konstruktor
     def __init__(self, wort, x, y, sender_pipe):
         super().__init__()  # Ruft den Konstruktor der Basisklasse auf
         self.wort = wort  # Initialisiert das Wort, das auf dem Button angezeigt wird
@@ -16,13 +18,15 @@ class TestButton(Static): #Konstruktor
 
     # Erstellt einen Button mit dem Wort, das auf der Karte angezeigt wird
     def compose(self) -> ComposeResult:
-        yield Button(self.wort, id=f"btn_{self.x}_{self.y}")  # Erstellt und yieldet einen Button mit dem Wort und einer ID basierend auf den Koordinaten
+        yield Button(self.wort,
+                     id=f"btn_{self.x}_{self.y}")  # Erstellt und yieldet einen Button mit dem Wort und einer ID basierend auf den Koordinaten
 
     CSS = """
         TestButton {
             layout: horizontal;
         }
         """
+
     # Event-Handler, wenn ein Button gedrückt wird
     async def on_button_pressed(self, event: Button.Pressed) -> None:
         button = event.control  # Holt das gedrückte Button-Objekt
@@ -33,6 +37,7 @@ class TestButton(Static): #Konstruktor
     # Sendet die Koordinaten des gedrückten Buttons über die anonyme Pipe
     def sende_nachricht_zu_pipe(self, x, y):
         os.write(self.sender_pipe, f"{x},{y}\n".encode())  # Schreibt die Koordinaten als Nachricht in die Pipe
+
 
 # Definiert die Haupt-App-Klasse für das Bingospiel
 class WidgetApp(App):
@@ -62,7 +67,6 @@ class WidgetApp(App):
 
         # Setzt die Stile für alle TestButton-Widgets
 
-
         for test_button in self.query(TestButton):  # Iteriert über alle TestButton-Widgets
             test_button.styles.layout = "horizontal"  # Setzt das Layout auf horizontal
 
@@ -71,3 +75,31 @@ class WidgetApp(App):
             button.styles.border = ("solid", "blue")  # Setzt den Rahmenstil und die Rahmenfarbe
             button.styles.background = "lightgrey"  # Setzt den Hintergrund des Buttons auf hellgrau
             button.styles.color = "black"  # Setzt die Textfarbe auf schwarz
+
+
+if __name__ == "__main__":
+    # Parser für Kommandozeilenargumente
+    parser = argparse.ArgumentParser(description="Buzzword-Bingo TUI")
+    parser.add_argument("-pipe", type=str, required=False, help="Name der benannten Pipe")
+    args = parser.parse_args()  # Parst die Kommandozeilenargumente
+
+    # Importiert die BingoSpiel-Klasse aus der IPC-Datei
+    from ipc import BingoSpiel
+
+    # Interaktiv nach den notwendigen Parametern fragen
+    wortdatei = input("Pfad zur Wortdatei: (z.B. Woerter) ")  # Fragt den Pfad zur Wortdatei ab
+    xachse = int(input("Anzahl der Felder in der Breite: "))  # Fragt die Anzahl der Felder in der Breite ab
+    yachse = int(input("Anzahl der Felder in der Höhe: "))  # Fragt die Anzahl der Felder in der Höhe ab
+    spieler_name = input("Name des Spielers: ")  # Fragt den Namen des Spielers ab
+
+    # Erstelle die Pipe
+    empf_pipe, sender_pipe = os.pipe()  # Erstellt ein anonymes Pipe-Paar für die Kommunikation
+
+    # Initialisiert das Spiel mit den angegebenen Parametern
+    spiel = BingoSpiel(wortdatei, xachse, yachse, spieler_name, empf_pipe,
+                       sender_pipe)  # Initialisiert ein neues BingoSpiel-Objekt
+    spiel.lade_woerter()  # Lädt die Wörter und generiert die Bingokarte
+
+    # Startet die WidgetApp
+    app = WidgetApp(spiel, sender_pipe)  # Initialisiert die WidgetApp
+    app.run()  # Startet die App

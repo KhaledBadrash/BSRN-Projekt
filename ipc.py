@@ -85,10 +85,10 @@ class BingoSpiel:  #k
                         break  # Bricht die Schleife ab
 
 
-if __name__ == "__main__":  #m
+if __name__ == "__main__":
     import argparse  # Importiert das argparse-Modul zum Parsen von Kommandozeilenargumenten
 
-    # Parser für Kommandozeilenargumente -------> TBD bis z.82 #m
+    # Parser für Kommandozeilenargumente -------> TBD bis z.82
     parser = argparse.ArgumentParser(description="Buzzword-Bingo-Spiel")
     parser.add_argument("-pipe", type=str, required=False, help="Name der benannten Pipe")
     args = parser.parse_args()  # Parst die Kommandozeilenargumente
