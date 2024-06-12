@@ -84,7 +84,13 @@ class BingoSpiel:  #k
                         self.beende_spiel()  # Beendet das Spiel
                         break  # Bricht die Schleife ab
 
+if name == "main": #m
+    import argparse  # Importiert das argparse-Modul zum Parsen von Kommandozeilenargumenten
 
+    # Parser für Kommandozeilenargumente -------> TBD bis z.82 #m
+    parser = argparse.ArgumentParser(description="Buzzword-Bingo-Spiel")
+    parser.add_argument("-pipe", type=str, required=False, help="Name der benannten Pipe")
+    args = parser.parse_args()  # Parst die Kommandozeilenargumente
 
 
 
