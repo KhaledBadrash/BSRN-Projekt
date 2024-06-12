@@ -97,7 +97,10 @@ if __name__ == "__main__":  #m
 
     wortdatei = input("Pfad zur Wortdatei: (z.B.Woerter) ")  # Fragt den Pfad zur txt.datei ab k
 
-
+    print("Willkommen im Buzzword-Bingospiel.")
+        #Abfrage
+        variable = input("Neue Runde? \n [Y/N]: ")
+        if variable == "Y" or variable == "y":
 
 
 #Falls Eingabe von Hoehe und Breite nicht gleich ist
