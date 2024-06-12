@@ -1,11 +1,12 @@
-import os # Importiert das os-Modul für Betriebssystemfunktionen-k
+import os  # Importiert das os-Modul für Betriebssystemfunktionen-k
 import Log
 import datetime  # Importiert das datetime-Modul für Datums- und Zeitfunktionen
 import random  #Importiert das random-Modul für Zufallsoperationen
 
+
 # x y achse gleich
 # Klasse für Interprozesskommunikation und Spiel-Logik
-class BingoSpiel: #k
+class BingoSpiel:  #k
     def __init__(self, wortdatei, xachse, yachse, spieler_name, empf_pipe, sender_pipe):
         self.wortdatei = wortdatei  # Initialisiert den Pfad zur Wortdatei
         self.xachse = xachse  # Initialisiert die Anzahl der Felder in der Breite
@@ -17,7 +18,7 @@ class BingoSpiel: #k
         self.sender_pipe = sender_pipe  # Initialisiert das Schreibende der Pipe
 
     # Lädt die Wörter aus der Datei und generiert die Bingokarte
-    def lade_woerter(self): #k
+    def lade_woerter(self):  #k
         with open(self.wortdatei, 'r') as file:  # Öffnet die Wortdatei im Lesemodus
             woerter = [line.strip() for line in
                        file.readlines()]  # Liest alle Zeilen aus der Datei und entfernt Leerzeichen
@@ -25,8 +26,8 @@ class BingoSpiel: #k
         self.spielbrett = [woerter[i:i + self.xachse] for i in
                            range(0, len(woerter), self.xachse)]  # Erstellt das Spielfeld als Liste von Listen
 
-# Startet das Spiel
-    def starte_spiel(self): #m
+    # Startet das Spiel
+    def starte_spiel(self):  #m
         self.lade_woerter()  # Lädt die Wörter und generiert die Bingokarte
         with open(self.logdatei, 'a') as log:  # Öffnet die Logdatei im Anhangmodus
             log.write(f"{datetime.datetime.now()} Start des Spiels\n")  # Schreibt den Start des Spiels in die Logdatei
@@ -36,8 +37,8 @@ class BingoSpiel: #k
         print(
             f"Spieler {self.spieler_name} hat das Spiel gestartet.")  # Gibt eine Meldung aus, dass das Spiel gestartet wurde
 
-# Markiert ein Feld auf der Bingokarte
-    def markiere_feld(self, x, y): #TBD pipe problem sender und empfänger pipe muss noch hinzugefügt werden-k
+    # Markiert ein Feld auf der Bingokarte
+    def markiere_feld(self, x, y):  #TBD pipe problem sender und empfänger pipe muss noch hinzugefügt werden-k
         if 0 <= x < self.xachse and 0 <= y < self.yachse:  # Überprüft, ob die Koordinaten innerhalb des Spielfelds liegen
             wort = self.spielbrett[y][x]  # Holt das Wort an den angegebenen Koordinaten
             self.spielbrett[y][x] = 'X'  # Markiert das Feld als 'X'
@@ -64,21 +65,12 @@ class BingoSpiel: #k
             return True  # Gibt True zurück, wenn die Nebendiagonale markiert ist
         return False  # Gibt False zurück, wenn kein Bingo erzielt wurde
 
-# Beendet das Spiel und schreibt das Ende ins Log
+    # Beendet das Spiel und schreibt das Ende ins Log
     def beende_spiel(self):
         with open(self.logdatei, 'a') as log:  # Öffnet die Logdatei im Anhangmodus
             log.write(f"{datetime.datetime.now()} Ende des Spiels\n")  # Schreibt das Ende des Spiels in die Logdatei
         print(
             f"Spieler {self.spieler_name} hat das Spiel beendet.")  # Gibt eine Meldung aus, dass das Spiel beendet wurde
-
-
-
-
-
-
-
-
-
 
 
 
@@ -127,5 +119,3 @@ def bingo_cards(url, anz_woerter):
 
 unique_words = bingo_cards(file_url, num_words)
 print("Zufällige Wörter:", unique_words)
-
-
