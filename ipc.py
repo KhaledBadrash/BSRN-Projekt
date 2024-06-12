@@ -25,7 +25,16 @@ class BingoSpiel: #k
         self.spielbrett = [woerter[i:i + self.xachse] for i in
                            range(0, len(woerter), self.xachse)]  # Erstellt das Spielfeld als Liste von Listen
 
+# Startet das Spiel
+    def starte_spiel(self): #m
+        self.lade_woerter()  # Lädt die Wörter und generiert die Bingokarte
+        with open(self.logdatei, 'a') as log:  # Öffnet die Logdatei im Anhangmodus
+            log.write(f"{datetime.datetime.now()} Start des Spiels\n")  # Schreibt den Start des Spiels in die Logdatei
+            log.write(
+                f"{datetime.datetime.now()} Größe des Spielfelds: ({self.xachse}/{self.yachse})\n")  # Schreibt die Größe des Spielfelds in die Logdatei
 
+        print(
+            f"Spieler {self.spieler_name} hat das Spiel gestartet.")  # Gibt eine Meldung aus, dass das Spiel gestartet wurde
 
 
 
