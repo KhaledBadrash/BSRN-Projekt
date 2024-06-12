@@ -1,6 +1,6 @@
 import os # Importiert das os-Modul für Betriebssystemfunktionen-k
 import Log
-import requests
+import datetime  # Importiert das datetime-Modul für Datums- und Zeitfunktionen
 import random  #Importiert das random-Modul für Zufallsoperationen
 
 
