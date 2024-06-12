@@ -73,7 +73,7 @@ class BingoSpiel:  #k
             f"Spieler {self.spieler_name} hat das Spiel beendet.")  # Gibt eine Meldung aus, dass das Spiel beendet wurde
 
     # Startet die Interprozesskommunikation
-    def starte_ipc(self): #tbd
+    def starte_ipc(self):  #tbd
         while True:  # Endlosschleife, um kontinuierlich Nachrichten zu lesen
             nachricht = os.read(self.empf_pipe, 1024).decode()  # Liest eine Nachricht von der Pipe und dekodiert sie
             if nachricht:  # Überprüft, ob eine Nachricht empfangen wurde
@@ -84,15 +84,14 @@ class BingoSpiel:  #k
                         self.beende_spiel()  # Beendet das Spiel
                         break  # Bricht die Schleife ab
 
-if name == "main": #m
+
+if __name__ == "__main__":  #m
     import argparse  # Importiert das argparse-Modul zum Parsen von Kommandozeilenargumenten
 
     # Parser für Kommandozeilenargumente -------> TBD bis z.82 #m
     parser = argparse.ArgumentParser(description="Buzzword-Bingo-Spiel")
     parser.add_argument("-pipe", type=str, required=False, help="Name der benannten Pipe")
     args = parser.parse_args()  # Parst die Kommandozeilenargumente
-
-
 
 #Falls Eingabe von Hoehe und Breite nicht gleich ist
 
