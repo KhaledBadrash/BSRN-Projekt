@@ -3,6 +3,46 @@ import Log
 import datetime  # Importiert das datetime-Modul für Datums- und Zeitfunktionen
 import random  #Importiert das random-Modul für Zufallsoperationen
 
+# x y achse gleich
+# Klasse für Interprozesskommunikation und Spiel-Logik
+class BingoSpiel: #k
+    def __init__(self, wortdatei, xachse, yachse, spieler_name, empf_pipe, sender_pipe):
+        self.wortdatei = wortdatei  # Initialisiert den Pfad zur Wortdatei
+        self.xachse = xachse  # Initialisiert die Anzahl der Felder in der Breite
+        self.yachse = yachse  # Initialisiert die Anzahl der Felder in der Höhe
+        self.spieler_name = spieler_name  # Initialisiert den Namen des Spielers
+        self.spielbrett = []  # Initialisiert das Spielfeld als leere Liste
+        self.logdatei = f" {datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}-bingo-{spieler_name}.txt"  # Erstellt den Namen der Logdatei mit Zeitstempel und Spielername
+        self.empf_pipe = empf_pipe  # Initialisiert das Leseende/ Empfänger der Pipe
+        self.sender_pipe = sender_pipe  # Initialisiert das Schreibende der Pipe
+
+    # Lädt die Wörter aus der Datei und generiert die Bingokarte
+    def lade_woerter(self): #k
+        with open(self.wortdatei, 'r') as file:  # Öffnet die Wortdatei im Lesemodus
+            woerter = [line.strip() for line in
+                       file.readlines()]  # Liest alle Zeilen aus der Datei und entfernt Leerzeichen
+        random.shuffle(woerter)  # Mische die Wörter zufällig
+        self.spielbrett = [woerter[i:i + self.xachse] for i in
+                           range(0, len(woerter), self.xachse)]  # Erstellt das Spielfeld als Liste von Listen
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #Falls Eingabe von Hoehe und Breite nicht gleich ist
 
@@ -47,10 +87,4 @@ def bingo_cards(url, anz_woerter):
 unique_words = bingo_cards(file_url, num_words)
 print("Zufällige Wörter:", unique_words)
 
-for _ in range(anz_spieler):
-    #erstelle Karte
-    #IPC pro Spieler ein Prozess
-    p = mp.Process(target=bingo_cards, args=(file_url, num_words))
-    p.start()
-    processes_spieler.append(p)
-    print("Spieler ", _ + 1, " hat das Spiel beigetreten: ", {p.pid})
+
