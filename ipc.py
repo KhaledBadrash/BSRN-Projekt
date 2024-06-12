@@ -93,6 +93,13 @@ if __name__ == "__main__":  #m
     parser.add_argument("-pipe", type=str, required=False, help="Name der benannten Pipe")
     args = parser.parse_args()  # Parst die Kommandozeilenargumente
 
+# Interaktiv nach den notwendigen Parametern fragen in Ubuntu
+
+    wortdatei = input("Pfad zur Wortdatei: (z.B.Woerter) ")  # Fragt den Pfad zur txt.datei ab k
+
+
+
+
 #Falls Eingabe von Hoehe und Breite nicht gleich ist
 
 startlog = Log.log()
