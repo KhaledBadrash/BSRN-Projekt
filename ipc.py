@@ -72,6 +72,17 @@ class BingoSpiel:  #k
         print(
             f"Spieler {self.spieler_name} hat das Spiel beendet.")  # Gibt eine Meldung aus, dass das Spiel beendet wurde
 
+    # Startet die Interprozesskommunikation
+    def starte_ipc(self): #tbd
+        while True:  # Endlosschleife, um kontinuierlich Nachrichten zu lesen
+            nachricht = os.read(self.empf_pipe, 1024).decode()  # Liest eine Nachricht von der Pipe und dekodiert sie
+            if nachricht:  # Überprüft, ob eine Nachricht empfangen wurde
+                x, y = map(int, nachricht.split(','))  # Zerlegt die Nachricht in x- und y-Koordinaten
+                if self.markiere_feld(x, y):  # Markiert das Feld mit den angegebenen Koordinaten
+                    if self.ueberpruefe_bingo():  # Überprüft, ob ein Bingo erzielt wurde
+                        print(f"{self.spieler_name} hat Bingo!")  # Gibt eine Meldung aus, dass Bingo erzielt wurde
+                        self.beende_spiel()  # Beendet das Spiel
+                        break  # Bricht die Schleife ab
 
 
 
