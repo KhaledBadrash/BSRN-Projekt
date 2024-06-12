@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
 # Interaktiv nach den notwendigen Parametern fragen in Ubuntu
 
-    wortdatei = input("Pfad zur Wortdatei: (z.B.Woerter) ")  # Fragt den Pfad zur txt.datei ab k
+    wortdatei = input("Pfad zur Wortdatei: (z.B.Textdatei) ")  # Fragt den Pfad zur txt.datei ab k
 
     print("Willkommen im Buzzword-Bingospiel.")
     #Abfrage

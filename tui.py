@@ -87,7 +87,7 @@ if __name__ == "__main__":
     from ipc import BingoSpiel
 
     # Interaktiv nach den notwendigen Parametern fragen
-    wortdatei = input("Pfad zur Wortdatei: (z.B. Woerter) ")  # Fragt den Pfad zur Wortdatei ab
+    wortdatei = input("Pfad zur Wortdatei: (z.B. Textdatei) ")  # Fragt den Pfad zur Wortdatei ab
     xachse = int(input("Anzahl der Felder in der Breite: "))  # Fragt die Anzahl der Felder in der Breite ab
     yachse = int(input("Anzahl der Felder in der Höhe: "))  # Fragt die Anzahl der Felder in der Höhe ab
     spieler_name = input("Name des Spielers: ")  # Fragt den Namen des Spielers ab
