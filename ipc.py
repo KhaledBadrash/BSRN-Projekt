@@ -64,7 +64,12 @@ class BingoSpiel: #k
             return True  # Gibt True zurück, wenn die Nebendiagonale markiert ist
         return False  # Gibt False zurück, wenn kein Bingo erzielt wurde
 
-
+# Beendet das Spiel und schreibt das Ende ins Log
+    def beende_spiel(self):
+        with open(self.logdatei, 'a') as log:  # Öffnet die Logdatei im Anhangmodus
+            log.write(f"{datetime.datetime.now()} Ende des Spiels\n")  # Schreibt das Ende des Spiels in die Logdatei
+        print(
+            f"Spieler {self.spieler_name} hat das Spiel beendet.")  # Gibt eine Meldung aus, dass das Spiel beendet wurde
 
 
 
