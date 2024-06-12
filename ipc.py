@@ -1,7 +1,8 @@
+import os # Importiert das os-Modul für Betriebssystemfunktionen-k
 import Log
 import requests
-import random
-import multiprocessing as mp
+import random  #Importiert das random-Modul für Zufallsoperationen
+
 
 #Falls Eingabe von Hoehe und Breite nicht gleich ist
 
