@@ -36,6 +36,33 @@ class BingoSpiel: #k
         print(
             f"Spieler {self.spieler_name} hat das Spiel gestartet.")  # Gibt eine Meldung aus, dass das Spiel gestartet wurde
 
+# Markiert ein Feld auf der Bingokarte
+    def markiere_feld(self, x, y): #TBD pipe problem sender und empfänger pipe muss noch hinzugefügt werden-k
+        if 0 <= x < self.xachse and 0 <= y < self.yachse:  # Überprüft, ob die Koordinaten innerhalb des Spielfelds liegen
+            wort = self.spielbrett[y][x]  # Holt das Wort an den angegebenen Koordinaten
+            self.spielbrett[y][x] = 'X'  # Markiert das Feld als 'X'
+            with open(self.logdatei, 'a') as log:  # Öffnet die Logdatei im Anhangmodus
+                log.write(
+                    f"{datetime.datetime.now()} {wort} ({x}/{y})\n")  # Schreibt das markierte Wort und die Koordinaten in die Logdatei
+            return True  # Gibt True zurück, um anzuzeigen, dass das Feld erfolgreich markiert wurde
+        return False  # Gibt False zurück, wenn die Koordinaten ungültig sind
+
+    # Überprüft, ob ein Bingo erzielt wurde
+    def ueberpruefe_bingo(self):
+        # Überprüft Reihen, Spalten und Diagonalen
+        for reihe in self.spielbrett:  # Iteriert über jede Reihe des Spielfelds
+            if all(zelle == 'X' for zelle in reihe):  # Überprüft, ob alle Zellen in der Reihe markiert sind
+                return True  # Gibt True zurück, wenn eine komplette Reihe markiert ist
+        for spalte in range(self.xachse):  # Iteriert über jede Spalte des Spielfelds
+            if all(self.spielbrett[reihe][spalte] == 'X' for reihe in
+                   range(self.yachse)):  # Überprüft, ob alle Zellen in der Spalte markiert sind
+                return True  # Gibt True zurück, wenn eine komplette Spalte markiert ist
+        if all(self.spielbrett[i][i] == 'X' for i in range(self.xachse)):  # Überprüft die Hauptdiagonale
+            return True  # Gibt True zurück, wenn die Hauptdiagonale markiert ist
+        if all(self.spielbrett[i][self.xachse - i - 1] == 'X' for i in
+               range(self.xachse)):  # Überprüft die Nebendiagonale
+            return True  # Gibt True zurück, wenn die Nebendiagonale markiert ist
+        return False  # Gibt False zurück, wenn kein Bingo erzielt wurde
 
 
 
