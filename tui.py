@@ -1,5 +1,6 @@
 #2. textual klasse
 from textual.app import App, ComposeResult
+from textual.layouts import grid
 from textual.widgets import Static, Button
 import argparse
 import os  # Importiert das os-Modul für Betriebssystemfunktionen
@@ -48,14 +49,15 @@ class WidgetApp(App):
 
     # Komposition der Widgets in der App
     def compose(self) -> ComposeResult:
-        self.widget = Static("Buzzword Bingo")  # Erstellt ein Static-Widget mit dem Titel "Buzzword Bingo"
-        yield self.widget  # "Yieldet" das Static-Widget
+        yield Static("Buzzword Bingo", classes="header")
 
-        # Erstellt TestButtons basierend auf den Wörtern auf der Bingokarte
+        # Erstellt das Raster (Versuch mit grid)
+        grid = Static(id="grid")
         for y in range(self.spiel.yachse):  # Iteriert über jede Zeile des Spielfelds
             for x in range(self.spiel.xachse):  # Iteriert über jede Spalte des Spielfelds
                 wort = self.spiel.spielbrett[y][x]  # Holt das Wort an den angegebenen Koordinaten
-                yield TestButton(wort, x, y, self.sender_pipe)  # Erstellt und yieldet einen TestButton
+                grid.mount(TestButton(wort, x, y, self.sender_pipe))
+        yield grid
 
     # Setzt die Stile für die Widgets, sobald die App geladen ist
     def on_mount(self) -> None:
@@ -103,3 +105,6 @@ if __name__ == "__main__":
     # Startet die WidgetApp
     app = WidgetApp(spiel, sender_pipe)  # Initialisiert die WidgetApp
     app.run()  # Startet die App
+
+#TBD
+#Textual CSS -->

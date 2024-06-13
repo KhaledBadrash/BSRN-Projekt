@@ -2,8 +2,7 @@ import os  # Importiert das os-Modul für Betriebssystemfunktionen-k
 import Log
 import datetime  # Importiert das datetime-Modul für Datums- und Zeitfunktionen
 import random  #Importiert das random-Modul für Zufallsoperationen
-from datetime import datetime
-# Importiert das datetime-Modul für Datums- und Zeitfunktionen (Log-Datei in ipc datei implementiert)
+import datetime # Importiert das datetime-Modul für Datums- und Zeitfunktionen (Log-Datei in ipc datei implementiert)
 
 class log:
     def __init__(self):
