@@ -2,8 +2,25 @@ import os  # Importiert das os-Modul für Betriebssystemfunktionen-k
 import Log
 import datetime  # Importiert das datetime-Modul für Datums- und Zeitfunktionen
 import random  #Importiert das random-Modul für Zufallsoperationen
+from datetime import datetime
+# Importiert das datetime-Modul für Datums- und Zeitfunktionen (Log-Datei in ipc datei implementiert)
 
+class log:
+    def __init__(self):
+        self.now = datetime.datetime.now()
+        self.date = self.now.strftime("%d/%m/%Y %H:%M:%S")
 
+    def logeintrag(self, eintrag):
+        self.now = datetime.datetime.now()
+        self.date = self.now.strftime("%d/%m/%Y %H:%M:%S")
+        with open('Protokoll git', 'a') as file:
+            file.write(f"{self.date} {eintrag}\n")
+
+    def logeintragstep(self):
+        self.logeintrag('Step')
+
+    def logeintragstart(self):
+        self.logeintrag('Start')
 # x y achse gleich
 # Klasse für Interprozesskommunikation und Spiel-Logik
 class BingoSpiel:  #k
@@ -13,9 +30,9 @@ class BingoSpiel:  #k
         self.yachse = yachse  # Initialisiert die Anzahl der Felder in der Höhe
         self.spieler_name = spieler_name  # Initialisiert den Namen des Spielers
         self.spielbrett = []  # Initialisiert das Spielfeld als leere Liste
-        self.logdatei = f" {datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}-bingo-{spieler_name}.txt"  # Erstellt den Namen der Logdatei mit Zeitstempel und Spielername
         self.empf_pipe = empf_pipe  # Initialisiert das Leseende/ Empfänger der Pipe
         self.sender_pipe = sender_pipe  # Initialisiert das Schreibende der Pipe
+        self.logger = log()  # Initialisiert das Log
 
     # Lädt die Wörter aus der Datei und generiert die Bingokarte
     def lade_woerter(self):  #k
@@ -29,10 +46,8 @@ class BingoSpiel:  #k
     # Startet das Spiel
     def starte_spiel(self):  #m
         self.lade_woerter()  # Lädt die Wörter und generiert die Bingokarte
-        with open(self.logdatei, 'a') as log:  # Öffnet die Logdatei im Anhangmodus
-            log.write(f"{datetime.datetime.now()} Start des Spiels\n")  # Schreibt den Start des Spiels in die Logdatei
-            log.write(
-                f"{datetime.datetime.now()} Größe des Spielfelds: ({self.xachse}/{self.yachse})\n")  # Schreibt die Größe des Spielfelds in die Logdatei
+        self.logger.logeintrag("Start des Spiels")
+        self.logger.logeintrag(f"Größe des Spielfelds: ({self.xachse}/{self.yachse})")
 
         print(
             f"Spieler {self.spieler_name} hat das Spiel gestartet.")  # Gibt eine Meldung aus, dass das Spiel gestartet wurde
@@ -42,9 +57,7 @@ class BingoSpiel:  #k
         if 0 <= x < self.xachse and 0 <= y < self.yachse:  # Überprüft, ob die Koordinaten innerhalb des Spielfelds liegen
             wort = self.spielbrett[y][x]  # Holt das Wort an den angegebenen Koordinaten
             self.spielbrett[y][x] = 'X'  # Markiert das Feld als 'X'
-            with open(self.logdatei, 'a') as log:  # Öffnet die Logdatei im Anhangmodus
-                log.write(
-                    f"{datetime.datetime.now()} {wort} ({x}/{y})\n")  # Schreibt das markierte Wort und die Koordinaten in die Logdatei
+            self.logger.logeintrag(f"{wort} ({x}/{y})")
             return True  # Gibt True zurück, um anzuzeigen, dass das Feld erfolgreich markiert wurde
         return False  # Gibt False zurück, wenn die Koordinaten ungültig sind
 
@@ -66,11 +79,9 @@ class BingoSpiel:  #k
         return False  # Gibt False zurück, wenn kein Bingo erzielt wurde
 
     # Beendet das Spiel und schreibt das Ende ins Log
-    def beende_spiel(self):
-        with open(self.logdatei, 'a') as log:  # Öffnet die Logdatei im Anhangmodus
-            log.write(f"{datetime.datetime.now()} Ende des Spiels\n")  # Schreibt das Ende des Spiels in die Logdatei
-        print(
-            f"Spieler {self.spieler_name} hat das Spiel beendet.")  # Gibt eine Meldung aus, dass das Spiel beendet wurde
+    def beende_spiel(self,ergebnis):
+        self.logger.logeintrag(f"{ergebnis}")
+        self.logger.logeintrag(f"Ende des Spiels")
 
     # Startet die Interprozesskommunikation
     def starte_ipc(self):  #tbd
