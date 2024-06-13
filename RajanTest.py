@@ -65,7 +65,7 @@ def main(stdscr):
 
     num_players, card_size = main_menu(stdscr)
 
-    words = read_words_from_file("words.txt")
+    words = read_words_from_file("Textdatei")
     player_cards = [create_bingo_card(words, card_size) for _ in range(num_players)]
 
     for i, card in enumerate(player_cards, start=1):
