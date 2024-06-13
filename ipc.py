@@ -12,7 +12,7 @@ class log:
     def logeintrag(self, eintrag):
         self.now = datetime.datetime.now()
         self.date = self.now.strftime("%d/%m/%Y %H:%M:%S")
-        with open('Protokoll git', 'a') as file:
+        with open('Protokoll', 'a') as file:
             file.write(f"{self.date} {eintrag}\n")
 
     def logeintragstep(self):
