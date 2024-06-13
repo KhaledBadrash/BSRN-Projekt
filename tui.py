@@ -22,11 +22,6 @@ class TestButton(Static):  #Konstruktor
         yield Button(self.wort,
                      id=f"btn_{self.x}_{self.y}")  # Erstellt und yieldet einen Button mit dem Wort und einer ID basierend auf den Koordinaten
 
-    CSS = """
-        TestButton {
-            layout: horizontal;
-        }
-        """
 
     # Event-Handler, wenn ein Button gedrückt wird
     async def on_button_pressed(self, event: Button.Pressed) -> None:
