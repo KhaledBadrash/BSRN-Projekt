@@ -2,7 +2,8 @@ import os  # Importiert das os-Modul für Betriebssystemfunktionen-k
 import Log
 import datetime  # Importiert das datetime-Modul für Datums- und Zeitfunktionen
 import random  #Importiert das random-Modul für Zufallsoperationen
-import datetime # Importiert das datetime-Modul für Datums- und Zeitfunktionen (Log-Datei in ipc datei implementiert)
+import datetime  # Importiert das datetime-Modul für Datums- und Zeitfunktionen (Log-Datei in ipc datei implementiert)
+
 
 class log:
     def __init__(self):
@@ -20,6 +21,8 @@ class log:
 
     def logeintragstart(self):
         self.logeintrag('Start')
+
+
 # x y achse gleich
 # Klasse für Interprozesskommunikation und Spiel-Logik
 class BingoSpiel:  #k
@@ -43,7 +46,7 @@ class BingoSpiel:  #k
                            range(0, len(woerter), self.xachse)]  # Erstellt das Spielfeld als Liste von Listen
 
     # Startet das Spiel
-    def starte_spiel(self):  #m
+    def starte_spiel(self):
         self.lade_woerter()  # Lädt die Wörter und generiert die Bingokarte
         self.logger.logeintrag("Start des Spiels")
         self.logger.logeintrag(f"Größe des Spielfelds: ({self.xachse}/{self.yachse})")
@@ -78,7 +81,7 @@ class BingoSpiel:  #k
         return False  # Gibt False zurück, wenn kein Bingo erzielt wurde
 
     # Beendet das Spiel und schreibt das Ende ins Log
-    def beende_spiel(self,ergebnis):
+    def beende_spiel(self, ergebnis):
         self.logger.logeintrag(f"{ergebnis}")
         self.logger.logeintrag(f"Ende des Spiels")
 
@@ -103,7 +106,7 @@ if __name__ == "__main__":
     parser.add_argument("-pipe", type=str, required=False, help="Name der benannten Pipe")
     args = parser.parse_args()  # Parst die Kommandozeilenargumente
 
-# Interaktiv nach den notwendigen Parametern fragen in Ubuntu
+    # Interaktiv nach den notwendigen Parametern fragen in Ubuntu
 
     wortdatei = input("Pfad zur Wortdatei: (z.B.Textdatei) ")  # Fragt den Pfad zur txt.datei ab k
 
@@ -116,9 +119,9 @@ if __name__ == "__main__":
         yachse = int(input("Anzahl der Felder in der Höhe: "))  # Fragt die Anzahl der Felder in der Höhe ab
         spieler_name = input("Name des Spielers: ")  # Fragt den Namen des Spielers ab --- PID TBD
     elif variable == "N" or variable == "n":  # elif else if
-            print("Das Spiel ist beendet")
+        print("Das Spiel ist beendet")
 
-# Erstelle die Pipe
+    # Erstelle die Pipe
     empf_pipe, sender_pipe = os.pipe()  # Erstellt ein anonymes Pipe-Paar für die Kommunikation #k
 
     # Initialisiert das Spiel und startet die IPC
@@ -126,3 +129,5 @@ if __name__ == "__main__":
                        sender_pipe)  # Initialisiert ein neues BingoSpiel-Objekt
     spiel.starte_spiel()  # Startet das Spiel
     spiel.starte_ipc()  # Startet die Interprozesskommunikation
+
+

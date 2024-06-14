@@ -21,6 +21,7 @@ class log:
     def logeintragstart(self):
         self.logeintrag('Start')
 
+
 # Klasse für Interprozesskommunikation und Spiel-Logik
 class BingoSpiel:
     def __init__(self, wortdatei, xachse, yachse, spieler_name, empf_pipe, sender_pipe):
@@ -36,16 +37,19 @@ class BingoSpiel:
     # Lädt die Wörter aus der Datei und generiert die Bingokarte
     def lade_woerter(self):
         with open(self.wortdatei, 'r') as file:  # Öffnet die Wortdatei im Lesemodus
-            woerter = [line.strip() for line in file.readlines()]  # Liest alle Zeilen aus der Datei und entfernt Leerzeichen
+            woerter = [line.strip() for line in
+                       file.readlines()]  # Liest alle Zeilen aus der Datei und entfernt Leerzeichen
         random.shuffle(woerter)  # Mische die Wörter zufällig
-        self.spielbrett = [woerter[i:i + self.xachse] for i in range(0, len(woerter), self.xachse)]  # Erstellt das Spielfeld als Liste von Listen
+        self.spielbrett = [woerter[i:i + self.xachse] for i in
+                           range(0, len(woerter), self.xachse)]  # Erstellt das Spielfeld als Liste von Listen
 
     # Startet das Spiel
     def starte_spiel(self):
         self.lade_woerter()  # Lädt die Wörter und generiert die Bingokarte
         self.logger.logeintrag("Start des Spiels")
         self.logger.logeintrag(f"Größe des Spielfelds: ({self.xachse}/{self.yachse})")
-        print(f"Spieler {self.spieler_name} hat das Spiel gestartet.")  # Gibt eine Meldung aus, dass das Spiel gestartet wurde
+        print(
+            f"Spieler {self.spieler_name} hat das Spiel gestartet.")  # Gibt eine Meldung aus, dass das Spiel gestartet wurde
 
     # Markiert ein Feld auf der Bingokarte
     def markiere_feld(self, x, y):
@@ -63,11 +67,13 @@ class BingoSpiel:
             if all(zelle == 'X' for zelle in reihe):  # Überprüft, ob alle Zellen in der Reihe markiert sind
                 return True  # Gibt True zurück, wenn eine komplette Reihe markiert ist
         for spalte in range(self.xachse):  # Iteriert über jede Spalte des Spielfelds
-            if all(self.spielbrett[reihe][spalte] == 'X' for reihe in range(self.yachse)):  # Überprüft, ob alle Zellen in der Spalte markiert sind
+            if all(self.spielbrett[reihe][spalte] == 'X' for reihe in
+                   range(self.yachse)):  # Überprüft, ob alle Zellen in der Spalte markiert sind
                 return True  # Gibt True zurück, wenn eine komplette Spalte markiert ist
         if all(self.spielbrett[i][i] == 'X' for i in range(self.xachse)):  # Überprüft die Hauptdiagonale
             return True  # Gibt True zurück, wenn die Hauptdiagonale markiert ist
-        if all(self.spielbrett[i][self.xachse - i - 1] == 'X' for i in range(self.xachse)):  # Überprüft die Nebendiagonale
+        if all(self.spielbrett[i][self.xachse - i - 1] == 'X' for i in
+               range(self.xachse)):  # Überprüft die Nebendiagonale
             return True  # Gibt True zurück, wenn die Nebendiagonale markiert ist
         return False  # Gibt False zurück, wenn kein Bingo erzielt wurde
 
@@ -89,6 +95,7 @@ class BingoSpiel:
                             self.beende_spiel("Gewonnen")
                             break  # Bricht die Schleife ab
 
+
 def fork_prozess(wortdatei, xachse, yachse, spieler_name, empf_pipe, sender_pipe):
     pid = os.fork()
     if pid == 0:  # Kindprozess
@@ -98,6 +105,7 @@ def fork_prozess(wortdatei, xachse, yachse, spieler_name, empf_pipe, sender_pipe
         sys.exit(0)  # Beendet den Kindprozess nach dem Spiel
     else:  # Elternprozess
         return pid
+
 
 if __name__ == "__main__":
     # Interaktiv nach den notwendigen Parametern fragen in Ubuntu
@@ -135,4 +143,3 @@ if __name__ == "__main__":
                 break
             pipe.write(f"{koords}\n")
             pipe.flush()
-
