@@ -5,7 +5,7 @@ import random  #Importiert das random-Modul für Zufallsoperationen
 import datetime  # Importiert das datetime-Modul für Datums- und Zeitfunktionen (Log-Datei in ipc datei implementiert)
 
 
-class log: #gut diese
+class log:  #gut diese
     def __init__(self):
         self.now = datetime.datetime.now()
         self.date = self.now.strftime("%d/%m/%Y %H:%M:%S")
@@ -53,7 +53,8 @@ class BingoSpiel:  #k
 
         print(
             f"Spieler {self.spieler_name} hat das Spiel gestartet.")  # Gibt eine Meldung aus, dass das Spiel gestartet wurde
-        self.logger.logeintrag({self.spieler_name})
+        self.logger.logeintrag(f"Spieler {self.spieler_name} hat als Host das Spiel gestartet.")
+
     # Markiert ein Feld auf der Bingokarte
     def markiere_feld(self, x, y):  #TBD pipe problem sender und empfänger pipe muss noch hinzugefügt werden-k
         if 0 <= x < self.xachse and 0 <= y < self.yachse:  # Überprüft, ob die Koordinaten innerhalb des Spielfelds liegen
@@ -64,7 +65,7 @@ class BingoSpiel:  #k
         return False  # Gibt False zurück, wenn die Koordinaten ungültig sind
 
     # Überprüft, ob ein Bingo erzielt wurde
-    def ueberpruefe_bingo(self): #zweidimensionales array
+    def ueberpruefe_bingo(self):  #zweidimensionales array
         return False
 
     def beende_spiel(self, ergebnis):
@@ -115,5 +116,3 @@ if __name__ == "__main__":
                        sender_pipe)  # Initialisiert ein neues BingoSpiel-Objekt
     spiel.starte_spiel()  # Startet das Spiel
     spiel.starte_ipc()  # Startet die Interprozesskommunikation
-
-
