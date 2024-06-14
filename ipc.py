@@ -53,7 +53,8 @@ class BingoSpiel:  #k
 
         print(
             f"Spieler {self.spieler_name} hat das Spiel gestartet.")  # Gibt eine Meldung aus, dass das Spiel gestartet wurde
-        self.logger.logeintrag({self.spieler_name})
+        self.logger.logeintrag({"Spieler: ", self.spieler_name, "hat als Host das Spiel gestartet"})
+
     # Markiert ein Feld auf der Bingokarte
     def markiere_feld(self, x, y):  #TBD pipe problem sender und empfänger pipe muss noch hinzugefügt werden-k
         if 0 <= x < self.xachse and 0 <= y < self.yachse:  # Überprüft, ob die Koordinaten innerhalb des Spielfelds liegen
