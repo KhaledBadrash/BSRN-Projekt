@@ -6,7 +6,7 @@ import textual.css as css
 
 
 # Definiert eine Klasse für TestButtons, die auf der Bingokarte angezeigt werden
-class BButton(Static):
+class BButton(App[str]):
 
     def compose(self) -> ComposeResult: #TBD:   Wörter zuweisung + Layout
         yield Button("Test")
