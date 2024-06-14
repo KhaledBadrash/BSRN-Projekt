@@ -46,7 +46,7 @@ class BingoSpiel:  #k
                            range(0, len(woerter), self.xachse)]  # Erstellt das Spielfeld als Liste von Listen
 
     # Startet das Spiel
-    def starte_spiel(self):
+    def starte_spiel(self):#
         self.lade_woerter()  # Lädt die Wörter und generiert die Bingokarte
         self.logger.logeintrag("Start des Spiels")
         self.logger.logeintrag(f"Größe des Spielfelds: ({self.xachse}/{self.yachse})")
