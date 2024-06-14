@@ -22,7 +22,7 @@ class BButton(Static):
         self.styles.background = "aquamarine"
         self.styles.color = "black"
         (self.styles).border = ("heavy", "black")
-        self.styles.width = 30  #manueel mit
+        self.styles.width = 18  #manueel mit
 
 
 # Definiert die Haupt-App-Klasse für das Bingospiel
