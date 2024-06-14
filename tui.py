@@ -25,6 +25,10 @@ class BButton(App[str]):
         self.styles.width = 18  #manueel mit
         self.bu
 
+ def create_card(self, words):
+        card = []
+        used_words = set()
+
 # Definiert die Haupt-App-Klasse für das Bingospiel
 class WidgetApp(App):
 

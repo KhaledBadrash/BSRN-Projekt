@@ -5,7 +5,7 @@ import random  #Importiert das random-Modul für Zufallsoperationen
 import datetime  # Importiert das datetime-Modul für Datums- und Zeitfunktionen (Log-Datei in ipc datei implementiert)
 
 
-class log:
+class log: #gut diese
     def __init__(self):
         self.now = datetime.datetime.now()
         self.date = self.now.strftime("%d/%m/%Y %H:%M:%S")
@@ -64,23 +64,9 @@ class BingoSpiel:  #k
         return False  # Gibt False zurück, wenn die Koordinaten ungültig sind
 
     # Überprüft, ob ein Bingo erzielt wurde
-    def ueberpruefe_bingo(self):
-        # Überprüft Reihen, Spalten und Diagonalen
-        for reihe in self.spielbrett:  # Iteriert über jede Reihe des Spielfelds
-            if all(zelle == 'X' for zelle in reihe):  # Überprüft, ob alle Zellen in der Reihe markiert sind
-                return True  # Gibt True zurück, wenn eine komplette Reihe markiert ist
-        for spalte in range(self.xachse):  # Iteriert über jede Spalte des Spielfelds
-            if all(self.spielbrett[reihe][spalte] == 'X' for reihe in
-                   range(self.yachse)):  # Überprüft, ob alle Zellen in der Spalte markiert sind
-                return True  # Gibt True zurück, wenn eine komplette Spalte markiert ist
-        if all(self.spielbrett[i][i] == 'X' for i in range(self.xachse)):  # Überprüft die Hauptdiagonale
-            return True  # Gibt True zurück, wenn die Hauptdiagonale markiert ist
-        if all(self.spielbrett[i][self.xachse - i - 1] == 'X' for i in
-               range(self.xachse)):  # Überprüft die Nebendiagonale
-            return True  # Gibt True zurück, wenn die Nebendiagonale markiert ist
-        return False  # Gibt False zurück, wenn kein Bingo erzielt wurde
+    def ueberpruefe_bingo(self): #zweidimensionales array
+        return False
 
-    # Beendet das Spiel und schreibt das Ende ins Log
     def beende_spiel(self, ergebnis):
         self.logger.logeintrag(f"{ergebnis}")
         self.logger.logeintrag(f"Ende des Spiels")
