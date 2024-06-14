@@ -2,7 +2,7 @@ from argparse import ArgumentParser, Namespace
 
 parser = ArgumentParser()
 
-parser.add_argument('echo', help='Echo message')
+parser.add_argument('eingabe')
 
 args: Namespace = parser.parse_args()
-print(args.echo)
+print(args.eingabe)
