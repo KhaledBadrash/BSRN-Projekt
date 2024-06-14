@@ -18,6 +18,13 @@ class TestButton(Static):
         yield Button("Test")
         yield Button("Test")
 
+    def on_mount(self) -> None:
+        self.widget.styles.background = "aquamarine"
+        self.widget.styles.color = "black"
+        self.widget.styles.border = ("heavy", "black")
+        self.widget.styles.width = 30  #manueel mit
+
+
 
 # Definiert die Haupt-App-Klasse für das Bingospiel
 class WidgetApp(App):
