@@ -2,7 +2,7 @@ import os  # Importiert das os-Modul für Betriebssystemfunktionen
 import datetime  # Importiert das datetime-Modul für Datums- und Zeitfunktionen
 import random  # Importiert das random-Modul für Zufallsoperationen
 import sys
-
+#s
 
 class log:
     def __init__(self):
