@@ -7,19 +7,15 @@ from TermTk.TTkCore.signal import pyTTkSignal
 from TermTk.TTkCore.color import TTkColor
 from TermTk.TTkWidgets.widget import TTkWidget
 
-# Set the GridLayout as default in the terminal widget
 gridLayout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0)
 root = ttk.TTk(layout=gridLayout)
 
-# Dictionary to store the original text of each button
-original_texts = {}
-groesse_Feld = 5
+original_texts = {}  #speichert die Texte pro button
+groesse_Feld = 3
 
 
-# Function to create a button click handler for each button
-def clicker(button, original_text):
+def clicker(button, original_text):  #streicht den Text mit X-Symbol und setzt zurück auf wiederholten Knopfdruck
     def auf_knopfdruck():
-        # Toggle the button text between "Clicked!" and the original text
         if button.text() == "X":
             button.setText(original_text)
         else:
@@ -28,19 +24,18 @@ def clicker(button, original_text):
     return auf_knopfdruck
 
 
-# Create a grid of buttons and connect each to its own click handler
 for i in range(groesse_Feld):
     for j in range(groesse_Feld):
-        if i == groesse_Feld / 2 + 0.5 - 1 and j == groesse_Feld / 2 + 0.5 - 1:
-            button = ttk.TTkButton(parent=root, border=True, text="X")
-            original_texts[button] = button.text()  # Store the original text
-            gridLayout.addWidget(button, i, j)
-            button.clicked.connect(clicker(button, original_texts[button]))
+        if i == groesse_Feld / 2 + 0.5 - 1 and j == groesse_Feld / 2 + 0.5 - 1:  #prüft ob Joker erstellt werden muss
+                                                                                 #wenn ja, setzt ihn in Mitte
+            button = ttk.TTkButton(parent=root, border=True, text="X")  # erstellt Joker-Button
+            original_texts[button] = button.text()
+            gridLayout.addWidget(button, i, j) #setzt button auf Position i und j, für Höhe u. Länge
         else:
-            button = ttk.TTkButton(parent=root, border=True, text="Button1")
-            original_texts[button] = button.text()  # Store the original text
+            button = ttk.TTkButton(parent=root, border=True, text="Button1") #erstellt normalen button
+            original_texts[button] = button.text()
             gridLayout.addWidget(button, i, j)
-            button.clicked.connect(clicker(button, original_texts[button]))
+            button.clicked.connect(clicker(button, original_texts[button])) #Beim Anklicken führt er erstellte Klick-Methode aus
 
 # Start the main event loop
 root.mainloop()
