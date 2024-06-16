@@ -5,7 +5,7 @@ def rechner_prog():
 
     parser = ArgumentParser()
 
-    parser.add_argument('-s', '--start ', required=False,
+    parser.add_argument('-s', '--start', required=False,
                         type=int, choices=[1, 2])
     parser.add_argument('zahl', help='Zahl', type=int)
     parser.add_argument('potenz', type=int)
@@ -18,15 +18,16 @@ def rechner_prog():
         if args.text == 0:
             print(f'ihre Zahl ist: {args.zahl}')
         elif args.text == 1:
-            print(f'{args.zahl} ** {args.potenz} (Option 1)')
+            print(f'Ergebnis: {args.zahl ** args.potenz}')
         elif args.text == 2:
-            print(f'{args.zahl} hoch {args.potenz} ist: {args.zahl} ** {args.potenz}')
+            print(f'{args.zahl} hoch {args.potenz} ist: {args.zahl ** args.potenz} ')
+
 
         else:
             while True:
                 try:
                     args.hochzwei = int(input("Bitte geben Sie eine neue Zahl ein: "))
-                    print(f'Neueingabe hochzwei ist: {args.hochzwei ** 2}')
+                    print(f'Neueingabe --> {args.hochzwei ** args.potenz}')
                     break
                 except ValueError:
                     print("Ungültige Eingabe. Bitte geben Sie eine ganze Zahl ein.")
