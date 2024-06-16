@@ -11,3 +11,4 @@ if args.verbose:
     print(f'{args.hochzwei} hochzwei ist: {args.hochzwei ** 2}')
 else:
     print(args.hochzwei ** 2)
+
