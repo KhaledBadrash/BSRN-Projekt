@@ -1,4 +1,4 @@
-import random
+import random #
 import TermTk as ttk
 from TermTk.TTkCore.signal import pyTTkSignal
 from TermTk.TTkCore.cfg import TTkCfg
