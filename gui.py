@@ -1,11 +1,10 @@
-import random
+import random #
 import TermTk as ttk
 from TermTk.TTkCore.signal import pyTTkSignal
 from TermTk.TTkCore.cfg import TTkCfg
 from TermTk.TTkCore.constant import TTkK
 from TermTk.TTkCore.string import TTkString
 from TermTk.TTkCore.signal import pyTTkSignal
-from TermTk.TTkCore.color import TTkColor
 from TermTk.TTkWidgets.widget import TTkWidget
 
 gridLayout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0)
@@ -23,7 +22,7 @@ with open(file_path, 'r') as file:
 def clicker(button, original_text):  #streicht den Text mit X-Symbol und setzt zurück auf wiederholten Knopfdruck
     def auf_knopfdruck():
         if button.text() == "X":
-            button.setText(original_text)
+            button.setText(original_text)  #setzt den Text auf Buzzword zurück, wenn es markierd war
         else:
             button.setText("X")
 
@@ -45,9 +44,11 @@ for i in range(groesse_Feld):
             button.clicked.connect(
                 clicker(button, original_texts[button]))  #Beim Anklicken führt er erstellte Klick-Methode aus
 
-bingo_check = true
 
-while bingo_check:  #Versuch Schleife zur Bingo-Überprüfung zu erstellen. TBD
-    if button.text == "X":
-        bingo_check = False
+
+#bingo_check = true
+
+#while bingo_check:  #Versuch Schleife zur Bingo-Überprüfung zu erstellen. TBD
+#    if button.text == "X":
+#        bingo_check = False
 root.mainloop()  #startet die App
