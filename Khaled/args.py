@@ -5,7 +5,7 @@ def rechner_prog():
 
     parser = ArgumentParser()
 
-    parser.add_argument('-s ', '--start ', required=False,
+    parser.add_argument('-s', '--start ', required=False,
                         type=int, choices=[1, 2])
     parser.add_argument('zahl', help='Zahl', type=int)
     parser.add_argument('potenz', type=int)
