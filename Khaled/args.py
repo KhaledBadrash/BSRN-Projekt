@@ -4,23 +4,12 @@ from argparse import ArgumentParser, Namespace
 def rechner_prog():
 
     parser = ArgumentParser()
-    print('Um den Rechner zu starten koennen sie -s oder --start.\n'
-          'Sie muessen aber 1 oder 2 angeben\n'
-          '1 = Starte den Rechner\n'
-          '2 = Starte den Rechner NICHT')
-    print('Gebe Sie Ganzzahl an welche du potenzieren willst an')
-    print('Gebe Sie die ganzzahlige Potenz an')
-    print('Um den den Text auszugeben zu starten koennen sie -t oder --text.\n'
-          'Sie muessen aber 1,2 oder 3 angeben\n'
-          '1 = Ausgabe Iher Zahl\n'
-          '2 = Ausgabe der Lösung\n'
-          '3 = Genaue Ausgabe der Lösung')
 
     parser.add_argument('-s ', '--start ', required=False,
                         type=int, choices=[1, 2])
-    parser.add_argument('zahl', help='Zahl', type=int, required=True)
-    parser.add_argument('potenz', type=int, required=True)
-    parser.add_argument('-t', '--text', help='Rechnung wird als Text angezeigt', required=False,
+    parser.add_argument('zahl', help='Zahl', type=int)
+    parser.add_argument('potenz', type=int)
+    parser.add_argument('-t', '--text', help='Rechnung wird als Text angezeigt',
                         type=int, choices=[0, 1, 2])
 
     args: Namespace = parser.parse_args()
@@ -47,4 +36,17 @@ def rechner_prog():
 
 
 if __name__ == "__main__":
+
     rechner_prog()
+
+    #    print('Um den Rechner zu starten koennen sie -s oder --start.\n'
+    #      'Sie muessen aber 1 oder 2 angeben\n'
+    #      '1 = Starte den Rechner\n'
+    #      '2 = Starte den Rechner NICHT')
+    #print('Gebe Sie Ganzzahl an welche du potenzieren willst an')
+    #print('Gebe Sie die ganzzahlige Potenz an')
+    #print('Um den den Text auszugeben zu starten koennen sie -t oder --text.\n'
+    #      'Sie muessen aber 1,2 oder 3 angeben\n'
+    #      '1 = Ausgabe Iher Zahl\n'
+    #      '2 = Ausgabe der Lösung\n'
+    #      '3 = Genaue Ausgabe der Lösung')
