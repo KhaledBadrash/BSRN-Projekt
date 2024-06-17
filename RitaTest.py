@@ -1,5 +1,6 @@
 import random
-from tkinter import Tk, Button, Label, messagebox, simpledialog
+import pytermtk as tk
+from pytermtk import dialog
 
 
 # Buzzwords aus der Datei einlesen
@@ -26,11 +27,9 @@ def create_bingo_board(buzzwords, height, width):
     return board
 
 
-# Tkinter GUI erstellen
+# GUI erstellen
 def create_gui(players, boards):
-    root = Tk()
-    root.title("Buzzword Bingo")
-
+    app = tk.App()
     current_player = [0]
 
     def update_current_player_label():
@@ -41,25 +40,25 @@ def create_gui(players, boards):
         # Check rows
         for row in board:
             if all(btn['state'] == 'disabled' or btn['text'] == '' for btn in row):
-                messagebox.showinfo("Bingo!", f"Bingo! {players[player_index]} hat eine komplette Reihe!")
+                tk.messagebox.showinfo("Bingo!", f"Bingo! {players[player_index]} hat eine komplette Reihe!")
                 return
 
         # Check columns
         for col in range(len(board[0])):
             if all(board[row][col]['state'] == 'disabled' or board[row][col]['text'] == '' for row in
                    range(len(board))):
-                messagebox.showinfo("Bingo!", f"Bingo! {players[player_index]} hat eine komplette Spalte!")
+                tk.messagebox.showinfo("Bingo!", f"Bingo! {players[player_index]} hat eine komplette Spalte!")
                 return
 
         # Check main diagonal
         if all(board[i][i]['state'] == 'disabled' or board[i][i]['text'] == '' for i in range(len(board))):
-            messagebox.showinfo("Bingo!", f"Bingo! {players[player_index]} hat eine komplette Diagonale!")
+            tk.messagebox.showinfo("Bingo!", f"Bingo! {players[player_index]} hat eine komplette Diagonale!")
             return
 
         # Check anti-diagonal
         if all(board[i][len(board) - 1 - i]['state'] == 'disabled' or board[i][len(board) - 1 - i]['text'] == '' for i
                in range(len(board))):
-            messagebox.showinfo("Bingo!", f"Bingo! {players[player_index]} hat eine komplette Diagonale!")
+            tk.messagebox.showinfo("Bingo!", f"Bingo! {players[player_index]} hat eine komplette Diagonale!")
             return
 
     buttons = []
@@ -72,7 +71,7 @@ def create_gui(players, boards):
             button_row = []
             state_row = []
             for j, word in enumerate(row):
-                btn = Button(root, text=word, width=15, height=3, state='disabled')
+                btn = tk.Button(text=word, width=15, height=3, state='disabled')
                 state_row.append('normal')
 
                 def toggle_state(b=btn, p_index=player_index, i=i, j=j):
@@ -96,7 +95,7 @@ def create_gui(players, boards):
         buttons.append(player_buttons)
         button_states.append(player_states)
 
-    current_player_label = Label(root, text="")
+    current_player_label = tk.Label(text="")
     current_player_label.grid(row=0, column=0, columnspan=len(players) * (len(boards[0][0]) + 1))
     update_current_player_label()
 
@@ -112,33 +111,29 @@ def create_gui(players, boards):
 
     enable_current_player_buttons()
 
-    root.mainloop()
+    app.run()
 
 
 if __name__ == "__main__":
     # Datei mit Buzzwords
-    filename = 'buzzwords.txt'
+    filename = 'Textdatei.txt'
     buzzwords = read_buzzwords(filename)
 
     # Benutzer nach der Anzahl der Spieler fragen
-    root = Tk()
-    root.withdraw()  # Hauptfenster verstecken, da wir nur die Eingabeaufforderungen benötigen
-    num_players = simpledialog.askinteger("Eingabe", "Geben Sie die Anzahl der Spieler ein:")
+    num_players = dialog.ask_integer("Eingabe", "Geben Sie die Anzahl der Spieler ein:")
 
     # Spielernamen eingeben
     players = []
     for i in range(num_players):
-        player_name = simpledialog.askstring("Eingabe", f"Geben Sie den Namen des Spielers {i + 1} ein:")
+        player_name = dialog.ask_string("Eingabe", f"Geben Sie den Namen des Spielers {i + 1} ein:")
         players.append(player_name)
 
     # Benutzer nach der Brettgröße fragen
-    height = simpledialog.askinteger("Eingabe", "Geben Sie die Höhe des Bingo-Bretts ein:")
-    width = simpledialog.askinteger("Eingabe", "Geben Sie die Breite des Bingo-Bretts ein:")
+    height = dialog.ask_integer("Eingabe", "Geben Sie die Höhe des Bingo-Bretts ein:")
+    width = dialog.ask_integer("Eingabe", "Geben Sie die Breite des Bingo-Bretts ein:")
 
     if height * width > len(buzzwords) + (1 if height == 5 and width == 5 or height == 7 and width == 7 else 0):
-        messagebox.showerror("Fehler", "Nicht genügend Buzzwords für diese Brettgröße!")
-        root.destroy()
+        tk.messagebox.showerror("Fehler", "Nicht genügend Buzzwords für diese Brettgröße!")
     else:
         boards = [create_bingo_board(buzzwords.copy(), height, width) for _ in range(num_players)]
-        root.destroy()  # Eingabeaufforderungsfenster schließen
         create_gui(players, boards)
