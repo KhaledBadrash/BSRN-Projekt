@@ -17,8 +17,8 @@ def create_bingo_board(buzzwords, height, width):
     for i in range(height):
         row = []
         for j in range(width):
-            if (height % 2 != 0 and width % 2 != 0 and i == height // 2 and j == width // 2):
-                row.append('')  # Leere Mitte bei ungerader Höhe und Breite
+            if (height == 5 and width == 5 or height == 7 and width == 7) and (i == height // 2 and j == width // 2):
+                row.append('')  # Leere Mitte bei 5x5 und 7x7
             else:
                 row.append(buzzwords[index])
                 index += 1
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     height = simpledialog.askinteger("Eingabe", "Geben Sie die Höhe des Bingo-Bretts ein:")
     width = simpledialog.askinteger("Eingabe", "Geben Sie die Breite des Bingo-Bretts ein:")
 
-    if height * width > len(buzzwords) + (1 if height % 2 != 0 and width % 2 != 0 else 0):
+    if height * width > len(buzzwords) + (1 if height == 5 and width == 5 or height == 7 and width == 7 else 0):
         messagebox.showerror("Fehler", "Nicht genügend Buzzwords für diese Brettgröße!")
         root.destroy()
     else:
