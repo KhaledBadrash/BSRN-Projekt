@@ -11,7 +11,7 @@ gridLayout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0) #um das feld
 root = ttk.TTk(layout=gridLayout)   #root --> APP / 'Mainbenutzer'?                   #Column? --> Notwendig?
 
 original_texts = {}  #speichert die Texte pro button /--TBD
-groesse_Feld = 8  # bestimmt Größe des Bingofeldes  /X-Y rausgehalten --muss mit args noch ..
+groesse_Feld = 20  # bestimmt Größe des Bingofeldes  /X-Y rausgehalten --muss mit args noch ..
 
 file_path = "/mnt/c/Users/M02Mu/PycharmProjects/BSRN-Projekt/Textdatei"  #Textdatei für Bingofelder
                                                                         #Args uebergabe
@@ -32,9 +32,9 @@ def klicker(button, original_text):  #streicht den Text mit X-Symbol und setzt z
 
 for i in range(groesse_Feld):       #IF für Joker
     for j in range(groesse_Feld):
-        if i == groesse_Feld / 2 + 0.5 - 1 and j == groesse_Feld / 2 + 0.5 - 1 and i != 2:  #prüft ob Joker erstellt werden muss
+        if i == groesse_Feld / 2 + 0.5 - 1 and j == groesse_Feld / 2 + 0.5 - 1 and i != 1:  #prüft ob Joker erstellt werden muss
             #wenn ja, setzt ihn in Mitte
-            button = ttk.TTkButton(parent=root, border=True, text="X")  # erstellt Joker-Button
+            button = ttk.TTkButton(parent=root, border=True, text="X")  # erstellt Joker-Button #parent=root and border=True->?
             original_texts[button] = button.text()
             gridLayout.addWidget(button, i, j)  #setzt button auf Position i/X und j/Y, für Höhe u. Länge
         else:
@@ -43,10 +43,10 @@ for i in range(groesse_Feld):       #IF für Joker
             original_texts[button] = button.text()
             gridLayout.addWidget(button, i, j)
             button.clicked.connect(
-                clicker(button, original_texts[button]))  #Beim Anklicken führt er erstellte Klick-Methode aus
+                klicker(button, original_texts[button]))  #Beim Anklicken führt er erstellte Klick-Methode aus
 
 
-
+                                        #statt shuffle raamdom JSON
 #bingo_check = true
 
 #while bingo_check:  #Versuch Schleife zur Bingo-Überprüfung zu erstellen. TBD
