@@ -31,7 +31,7 @@ def rechner_prog():
     args: Namespace = parser.parse_args()
     #woerter_datei
     if args.start == True:
-        lade_woerter(args.woerter_pfad, args.x, args.y)
+        ladeWoerter(args.woerter_pfad, args.x, args.y)
 
 
 
