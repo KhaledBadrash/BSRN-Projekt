@@ -115,13 +115,13 @@ def bingo_master(word_queue, buzzwords, player1_turn_event, player2_turn_event):
 
 
 def main():
-    player_name1 = input("Wie heißt Spieler 1? ")
-    player_name2 = input("Wie heißt Spieler 2? ")
+    player_name1 = input("Willkommen zum Buzzword-Bingo \n\nBitte geben Sie den Namen des 1. Spielers ein: ")
+    player_name2 = input("Bitte geben Sie den Namen des 2. Spielers ein: ")
     log_directory = input("Gib den Pfad zum Verzeichnis für die Log-Datei ein: ")
     roundfile = input("Gib den Pfad zur Textdatei ein: ")
 
-    rows = int(input("Anzahl der Zeilen: "))
-    columns = int(input("Anzahl der Spalten: "))
+    rows = int(input("Anzahl der Zeilen (Y-Achse): "))
+    columns = int(input("Anzahl der Spalten (X-Achse): "))
 
     buzzwords = read_buzzword(roundfile)
 
