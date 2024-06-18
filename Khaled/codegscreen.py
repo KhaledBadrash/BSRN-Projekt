@@ -1,7 +1,7 @@
 import argparse
 import logging
 import random
-import time #für den Gscreen
+import time     #für den Gscreen
 from argparse import ArgumentParser, Namespace
 import TermTk as ttk
 from TermTk.TTkCore.signal import pyTTkSignal
@@ -9,6 +9,7 @@ from TermTk.TTkCore.cfg import TTkCfg
 from TermTk.TTkCore.constant import TTkK
 from TermTk.TTkCore.string import TTkString
 from TermTk.TTkWidgets.widget import TTkWidget
+
 
 def ladeWoerter(woerterPfad, xachse, yachse):
     try:
@@ -21,18 +22,11 @@ def ladeWoerter(woerterPfad, xachse, yachse):
         erorfile = 'Die angegebene Datei konnte nicht gefunden werden'
         return erorfile
 
-def show_winner_screen(root, buttons, groesse_feld):
-    colors = [TTkCfg.color.TTkColor.bg('#FF0000'), TTkCfg.color.TTkColor.bg('#00FF00'), TTkCfg.color.TTkColor.bg('#0000FF')]
-    for _ in range(10):
-        for i in range(groesse_feld):
-            for j in range(groesse_feld):
-                button = buttons[i][j]
-                button.setStyle(colors[random.randint(0, len(colors) - 1)])
-                if random.random() < 0.2:
-                    button.setText("GEWONNEN")
-                    button.setStyle(TTkCfg.color.TTkColor.bg('#FFFF00'))
-        root.update()
-        time.sleep(0.5)
+def gewinnerScreen():
+    root = ttk.TTk()
+    label = ttk.TTkLabel(parent=root, text="Gewinner! Herzlichen Glückwunsch!")
+    root.mainloop()
+
 
 def main(args):
     gridLayout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0)
@@ -52,7 +46,8 @@ def main(args):
                 click_count[0] += 1
                 # Überprüfen, ob der Gewinnerscreen nach 3 Klicks angezeigt werden soll
                 if click_count[0] == 3:
-                    show_winner_screen(root, buttons, groesse_feld)
+                    root.quit()
+                    gewinnerScreen()
         return auf_knopfdruck
 
     buttons = []
@@ -73,8 +68,8 @@ def main(args):
         buttons.append(row)
 
     root.update()
-    show_winner_screen(root, buttons, groesse_feld)
     root.mainloop()
+
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -88,4 +83,4 @@ if __name__ == "__main__":
         main(args)
 
 
-#Ubunto eingabe:python3 codegscreen.py -n woerter_datei 3 3
+# Ubunto eingabe: python3 codegscreen.py -n woerter_datei 3 3
