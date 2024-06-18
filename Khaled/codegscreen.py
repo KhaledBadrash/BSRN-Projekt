@@ -22,7 +22,7 @@ def ladeWoerter(woerterPfad, xachse, yachse):
         erorfile = 'Die angegebene Datei konnte nicht gefunden werden'
         return erorfile
 
-def gewinnerScreen():
+def gewinnerScreen():  #TBD
     root = ttk.TTk()
     label = ttk.TTkLabel(parent=root, text="Gewinner! Herzlichen Glückwunsch!")
     root.mainloop()
@@ -36,16 +36,16 @@ def main(args):
     groesse_feld = args.xachse
 
     woerter = ladeWoerter(args.woerter_pfad, args.xachse, args.yachse)
-    click_count = [0]  # Zähler für die Klicks
+    klick_counter = [0]  # Zähler für die Klicks
     def klicker(button, original_text):
         def auf_knopfdruck():
             if button.text() == "X":
                 button.setText(original_text)
             else:
                 button.setText("X")
-                click_count[0] += 1
+                klick_counter[0] += 1 #Klickzähler
                 # Überprüfen, ob der Gewinnerscreen nach 3 Klicks angezeigt werden soll
-                if click_count[0] == 3:
+                if klick_counter[0] == 3:
                     root.quit()
                     gewinnerScreen()
         return auf_knopfdruck
@@ -81,6 +81,5 @@ if __name__ == "__main__":
 
     if args.newround:
         main(args)
-
 
 # Ubunto eingabe: python3 codegscreen.py -n woerter_datei 3 3
