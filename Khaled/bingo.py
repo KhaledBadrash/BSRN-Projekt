@@ -3,6 +3,7 @@ import logging
 import random
 from argparse import ArgumentParser, Namespace
 import TermTk as ttk
+from TermTk import TTkColor
 from TermTk.TTkCore.signal import pyTTkSignal
 from TermTk.TTkCore.cfg import TTkCfg
 from TermTk.TTkCore.constant import TTkK
@@ -29,10 +30,15 @@ def gewinnerScreen():  #TBD
 
 def main(args):
     gridLayout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0)
+
     root = ttk.TTk(layout=gridLayout)
+    v_box_layout = ttk.TTkVBoxLayout
+#    gridLayout.addItem(v_box_layout,4,1)
+#    v_box_layout.addWidget(ttk.TTkButton(border=True, text="Gewonnen"))
+#    v_box_layout.addWidget(ttk.TTkButton(border=True, text="Gewonnen"))
 
     original_texts = {}
-    groesse_feld = args.xachse
+    groesse_feld = args.xachse and args.yachse
 
     woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
     klick_counter = [0]  # Zähler für die Klicks
@@ -48,6 +54,7 @@ def main(args):
                 if klick_counter[0] == 3:
                     root.quit()
                     gewinnerScreen()
+
         return auf_knopfdruck
 
     buttons = []
@@ -55,7 +62,7 @@ def main(args):
         row = []
         for j in range(groesse_feld):
             if i == groesse_feld // 2 and j == groesse_feld // 2:
-                button = ttk.TTkButton(parent=root, border=True, text="X")
+                button = ttk.TTkButton(parent=root, border=True, text="JOKER")
                 original_texts[button] = button.text()
                 gridLayout.addWidget(button, i, j)
             else:
