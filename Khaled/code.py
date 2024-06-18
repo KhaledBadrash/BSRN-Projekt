@@ -8,11 +8,14 @@ def lade_woerter(woerter_pfad, xachse, yachse):
         with open(woerter_pfad, 'r', encoding='utf-8') as file:
             woerter = [line.strip() for line in file.readlines()]
             anz_woerter = xachse * yachse
+            if len(woerter) < anz_woerter:
+                raise ValueError("Nicht genug Wörter in der Datei.")
             zufaellige_woerter = random.sample(woerter, anz_woerter)
             return zufaellige_woerter
     except FileNotFoundError:
-        erorfile = 'Die angegebene Datei konnte nicht gefunden werden'
-        return erorfile
+        return 'Die angegebene Datei konnte nicht gefunden werden'
+    except ValueError as e:
+        return str(e)
 
 
 def gewinner_screen(parent):
@@ -29,6 +32,10 @@ def main(args):
     groesse_feld = args.xachse
 
     woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
+    if isinstance(woerter, str):  # Falls eine Fehlermeldung zurückgegeben wird
+        print(woerter)
+        return
+
     klick_counter = [0]  # Zähler für die Klicks
 
     def klicker(button, original_text):
@@ -38,13 +45,12 @@ def main(args):
             else:
                 button.setText("X")
                 klick_counter[0] += 1  # Klickzähler
-                # Überprüfen, ob der Gewinnerscreen nach 3 Klicks angezeigt werden soll
-                # hier könnte man dann die ganzen Überprüfungen mit JSON einbauen
                 if klick_counter[0] == 3:
                     gewinner_screen(root)
         return auf_knopfdruck
 
     buttons = []
+    wort_index = 0  # Index für die zufälligen Wörter
     for i in range(groesse_feld):
         row = []
         for j in range(groesse_feld):
@@ -53,7 +59,8 @@ def main(args):
                 original_texts[button] = button.text()
                 grid_layout.addWidget(button, i, j)
             else:
-                text = random.choice(woerter)
+                text = woerter[wort_index]
+                wort_index += 1
                 button = ttk.TTkButton(parent=root, border=True, text=text)
                 original_texts[button] = button.text()
                 grid_layout.addWidget(button, i, j)
