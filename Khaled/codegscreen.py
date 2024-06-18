@@ -45,6 +45,7 @@ def main(args):
                 button.setText("X")
                 klick_counter[0] += 1 #Klickzähler
                 # Überprüfen, ob der Gewinnerscreen nach 3 Klicks angezeigt werden soll
+                #hier könnte man dsnn die ganzen berprüfungen mit JSON einbauen
                 if klick_counter[0] == 3:
                     root.quit()
                     gewinnerScreen()
