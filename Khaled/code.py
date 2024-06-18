@@ -202,3 +202,5 @@ if __name__ == "__main__":
 
         #python3 code.py -n woerter_datei 3 3 khaled
 
+
+    #CHECK BINGO FUNKTIONIERT NOCH NICHT GANZ
