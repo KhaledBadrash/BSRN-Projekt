@@ -86,3 +86,6 @@ if __name__ == "__main__":
 
     if args.newround:
         main(args)
+
+
+#Ubunto eingabe:python3 codegscreen.py -n woerter_datei 3 3
