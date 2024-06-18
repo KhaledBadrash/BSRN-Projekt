@@ -8,7 +8,7 @@ from datetime import datetime
 # Hilfsfunktion, um Daten in eine JSON-Datei zu loggen
 
 
-def log_data(host_name,button_text, x_wert, y_wert, auswahl_zeitpunkt):
+def host_log_data(host_name,button_text, x_wert, y_wert, auswahl_zeitpunkt):
     data = {
         'host_name': host_name,
         'button_text': button_text,
@@ -21,6 +21,14 @@ def log_data(host_name,button_text, x_wert, y_wert, auswahl_zeitpunkt):
     with open('log_data_host.json', 'a') as file:  # 'a' um Daten an die Datei anzuhängen
         json.dump(data, file)
         file.write('\n')  # Neue Zeile für bessere Lesbarkeit in der Datei
+
+# Neue Methode zum Loggen des Spielstarts
+def log_game_start(host_name):
+    start_data = {
+        'host_name': host_name,
+        'event': "Spiel gestartet",
+        'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
+    }
 
 
 def lade_woerter(woerter_pfad, xachse, yachse):
@@ -45,6 +53,8 @@ def gewinner_screen(parent):
 
 
 def main(args):
+    host_log_data(args.personal_name, "Spiel gestartet", 0, 0, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
+
     # Überprüfung, ob die Werte für X- und Y-Achse identisch sind
     if args.xachse != args.yachse:
         print("Fehler: Die Werte für X- und Y-Achse müssen identisch sein,\num ein Spielfeld generieren zu koennen")
@@ -83,7 +93,8 @@ def main(args):
                 button.setText("X")
                 klick_counter[0] += 1  # Klickzähler erhöhen
 
-                log_data(args.personal_name, str(original_text), x, y, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
+                host_log_data(args.personal_name, str(original_text), x, y,
+                              datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
                 if klick_counter[0] == 3:
                     gewinner_screen(root)
         return auf_knopfdruck
