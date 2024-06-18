@@ -33,6 +33,16 @@ def log_game_start(host_name):
         json.dump(start_data, file)
         file.write('\n')  # Neue Zeile für bessere Lesbarkeit in der Datei
 
+def log_win(host_name):
+    start_data = {
+        'host_name': host_name,
+        'Event': "GEWONNEN",
+        'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
+    }
+    with open('log_data_host.json', 'a') as file:  # 'a' um Daten an die Datei anzuhängen
+        json.dump(start_data, file)
+        file.write('\n')  # Neue Zeile für bessere Lesbarkeit in der Datei
+
 def lade_woerter(woerter_pfad, xachse, yachse):
     try:
         with open(woerter_pfad, 'r', encoding='utf-8') as file:
@@ -52,6 +62,7 @@ def gewinner_screen(parent):
     win_root = ttk.TTkWindow(parent=parent, title="Gewinner", border=True, pos=(35, 5), size=(30, 10))
     ttk.TTkLabel(parent=win_root, text="Gewinner! Herzlichen Glückwunsch!", pos=(2, 2))
     win_root.raiseWidget()
+    log_win(args.personal_name)
 
 
 def main(args):
