@@ -1,3 +1,4 @@
+import os
 import random
 from argparse import ArgumentParser, Namespace
 import TermTk as ttk
@@ -44,6 +45,23 @@ def gewinner_screen(parent):
 
 
 def main(args):
+    # Überprüfung, ob die Werte für X- und Y-Achse identisch sind
+    if args.xachse != args.yachse:
+        print("Fehler: Die Werte für X- und Y-Achse müssen identisch sein,\num ein Spielfeld generieren zu koennen")
+        return
+
+    # Überprüfung der Existenz des Dateipfades
+    if not os.path.exists(args.woerter_pfad):
+        print(f"Fehler: Der angegebene Dateipfad '{args.woerter_pfad}' existiert nicht."
+              f"\nversuchen Sie es mit 'woerter_datei' ")
+        return
+
+    # Überprüfung, ob ein persönlicher Name angegeben wurde
+    if not args.personal_name:
+        print("Fehler: Es wurde kein Host-Name angegeben.")
+        return
+
+
     grid_layout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0)
     root = ttk.TTk(layout=grid_layout)
 
@@ -103,3 +121,6 @@ if __name__ == "__main__":
 
     if args.newround:
         main(args)
+
+        #python3 code.py -n woerter_datei 3 3 khaled
+
