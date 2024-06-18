@@ -5,28 +5,36 @@ import TermTk as ttk
 import json
 from datetime import datetime
 
+
+def read_json_log():
+    try:
+        with open('log_data_host.json', 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+def write_json_log(data):
+    with open('log_data_host.json', 'w') as file:
+        json.dump(data, file)
+
+
 # Hilfsfunktion, um Daten in eine JSON-Datei zu loggen
-
-
-def host_log_data(host_name,button_text, x_wert, y_wert, auswahl_zeitpunkt):
-    data = {
+def host_log_data(host_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
+    logs = read_json_log()
+    logs.append({
         'host_name': host_name,
         'button_text': button_text,
         'x_wert': x_wert,
         'y_wert': y_wert,
         'auswahl_zeitpunkt': auswahl_zeitpunkt
-
-    }
-
-    with open('log_data_host.json', 'a') as file:  # 'a' um Daten an die Datei anzuhängen
-        json.dump(data, file)
-        file.write('\n')  # Neue Zeile für bessere Lesbarkeit in der Datei
-
+    })
+    write_json_log(logs)
 # Neue Methode zum Loggen des Spielstarts
-def log_game_start(host_name):
+def log_game_start(host_name,args):
     start_data = {
         'host_name': host_name,
         'Event': "Spiel gestartet",
+        'max_spieler': args.max_spieler,
         'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
     }
     with open('log_data_host.json', 'a') as file:  # 'a' um Daten an die Datei anzuhängen
@@ -83,6 +91,10 @@ def main(args):
         print("Fehler: Es wurde kein Host-Name angegeben.")
         return
 
+    if not args.max_spieler:
+        print("Fehler: Es wurde kein Host-Name angegeben.")
+        return
+
 
     grid_layout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0)
     root = ttk.TTk(layout=grid_layout)
@@ -100,17 +112,17 @@ def main(args):
     def klicker(button, original_text, x, y):
         def auf_knopfdruck():
             if button.text() == "X":
-                button.setText(original_text)
+                logs = read_json_log()
+                # Überprüfung, ob der letzte Eintrag zu diesem Button gehört
+                if logs and 'button_text' in logs[-1] and logs[-1]['x_wert'] == x and logs[-1]['y_wert'] == y:
+                    button.setText(logs[-1]['button_text'])  # Setze den Text auf den letzten gespeicherten Wert
+                    logs.pop()  # Entferne den letzten Eintrag
+                    write_json_log(logs)  # Aktualisiere die Log-Datei
             else:
                 button.setText("X")
-                klick_counter[0] += 1  # Klickzähler erhöhen
+                host_log_data(args.personal_name, original_text, x, y, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
 
-                host_log_data(args.personal_name, str(original_text), x, y,
-                              datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
-                if klick_counter[0] == 3:
-                    gewinner_screen(root)
         return auf_knopfdruck
-
     buttons = []
     wort_index = 0  # Index für die zufälligen Wörter
     for i in range(groesse_feld):
@@ -140,6 +152,8 @@ if __name__ == "__main__":
     parser.add_argument('xachse', nargs='?', help='X-Achse', type=int)
     parser.add_argument('yachse', nargs='?', help='Y-Achse', type=int)
     parser.add_argument('personal_name', nargs='?', help='Persönlicher Name')
+    parser.add_argument('max_spieler', nargs='?', help='Maximale Anzahl an Spielern', type=int)
+
     args = parser.parse_args()
     #Ich habe nargs='?' hinzugefügt,damit die Argumente optional sind.
     #Wenn ein Argument nicht angegeben wird, wird sein Wert als None gesetzt
