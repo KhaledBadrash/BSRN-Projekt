@@ -1,14 +1,11 @@
-# Diese Datei ist nur für mich zum Testen!!!
-
 import random
 from argparse import ArgumentParser, Namespace
 import TermTk as ttk
 
 
-
-def lade_woerter(woerterPfad, xachse, yachse):
+def lade_woerter(woerter_pfad, xachse, yachse):
     try:
-        with open(woerterPfad, 'r', encoding='utf-8') as file:
+        with open(woerter_pfad, 'r', encoding='utf-8') as file:
             woerter = [line.strip() for line in file.readlines()]
             anz_woerter = xachse * yachse
             zufaellige_woerter = random.sample(woerter, anz_woerter)
@@ -17,33 +14,34 @@ def lade_woerter(woerterPfad, xachse, yachse):
         erorfile = 'Die angegebene Datei konnte nicht gefunden werden'
         return erorfile
 
-def gewinnerScreen():  #TBD
-    root = ttk.TTk()
-    ttk.TTkLabel(parent=root, text="Gewinner! Herzlichen Glückwunsch!")
-    root.mainloop()
+
+def gewinner_screen(parent):
+    win_root = ttk.TTkWindow(parent=parent, title="Gewinner", border=True, pos=(35, 5), size=(30, 10))
+    ttk.TTkLabel(parent=win_root, text="Gewinner! Herzlichen Glückwunsch!", pos=(2, 2))
+    win_root.raiseWidget()
 
 
 def main(args):
-    gridLayout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0)
-    root = ttk.TTk(layout=gridLayout)
+    grid_layout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0)
+    root = ttk.TTk(layout=grid_layout)
 
     original_texts = {}
     groesse_feld = args.xachse
 
     woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
     klick_counter = [0]  # Zähler für die Klicks
+
     def klicker(button, original_text):
         def auf_knopfdruck():
             if button.text() == "X":
                 button.setText(original_text)
             else:
                 button.setText("X")
-                klick_counter[0] += 1 #Klickzähler
+                klick_counter[0] += 1  # Klickzähler
                 # Überprüfen, ob der Gewinnerscreen nach 3 Klicks angezeigt werden soll
-                #hier könnte man dsnn die ganzen berprüfungen mit JSON einbauen
+                # hier könnte man dann die ganzen Überprüfungen mit JSON einbauen
                 if klick_counter[0] == 3:
-                    root.quit()
-                    gewinnerScreen()
+                    gewinner_screen(root)
         return auf_knopfdruck
 
     buttons = []
@@ -53,12 +51,12 @@ def main(args):
             if i == groesse_feld // 2 and j == groesse_feld // 2:
                 button = ttk.TTkButton(parent=root, border=True, text="X")
                 original_texts[button] = button.text()
-                gridLayout.addWidget(button, i, j)
+                grid_layout.addWidget(button, i, j)
             else:
                 text = random.choice(woerter)
                 button = ttk.TTkButton(parent=root, border=True, text=text)
                 original_texts[button] = button.text()
-                gridLayout.addWidget(button, i, j)
+                grid_layout.addWidget(button, i, j)
                 button.clicked.connect(klicker(button, original_texts[button]))
             row.append(button)
         buttons.append(row)
@@ -78,4 +76,4 @@ if __name__ == "__main__":
     if args.newround:
         main(args)
 
-# Ubunto eingabe: python3 bingo.py -n woerter_datei 3 3
+# Ubuntu Eingabe: python3 code.py -n woerter_datei 3 3
