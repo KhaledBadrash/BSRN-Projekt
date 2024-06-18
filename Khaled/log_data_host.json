@@ -1,6 +1,34 @@
-,{"host_name": "khaled", "event": "Spiel gestartet", "timestamp": "18-06-2024 23:29:14 Uhr"}
-{"host_name": "khaled", "button_text": "Load Balancing", "x_wert": 0, "y_wert": 1, "auswahl_zeitpunkt": "18-06-2024 23:29:15 Uhr"}
-{"host_name": "khaled", "button_text": "Zugriff", "x_wert": 0, "y_wert": 2, "auswahl_zeitpunkt": "18-06-2024 23:29:15 Uhr"}
-{"host_name": "khaled", "button_text": "Token", "x_wert": 1, "y_wert": 2, "auswahl_zeitpunkt": "18-06-2024 23:29:16 Uhr"}
-{"host_name": "khaled", "Event": "Spiel gestartet", "timestamp": "18-06-2024 23:29:59 Uhr,"}
-{"host_name": "khaled", "button_text": "Encryption", "x_wert": 0, "y_wert": 1, "auswahl_zeitpunkt": "18-06-2024 23:30:01 Uhr"}
+[
+    {
+        "host_name": "khaled",
+        "Event": "Spiel gestartet",
+        "max_spieler": 2,
+        "timestamp": "19-06-2024 00:50:38 Uhr"
+    },
+    {
+        "host_name": "khaled",
+        "button_text": "Packet",
+        "x_wert": 0,
+        "y_wert": 2,
+        "auswahl_zeitpunkt": "19-06-2024 00:50:47 Uhr"
+    },
+    {
+        "host_name": "khaled",
+        "button_text": "Cookie",
+        "x_wert": 1,
+        "y_wert": 3,
+        "auswahl_zeitpunkt": "19-06-2024 00:50:55 Uhr"
+    },
+    {
+        "host_name": "khaled",
+        "button_text": "Versionierung",
+        "x_wert": 2,
+        "y_wert": 3,
+        "auswahl_zeitpunkt": "19-06-2024 00:50:55 Uhr"
+    },
+    {
+        "host_name": "khaled",
+        "Event": "GEWONNEN",
+        "timestamp": "19-06-2024 00:50:55 Uhr"
+    }
+]

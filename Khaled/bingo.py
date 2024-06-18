@@ -5,44 +5,64 @@ import TermTk as ttk
 import json
 from datetime import datetime
 
+
+def read_json_log():
+    try:
+        with open('log_data_host.json', 'r') as file:
+            data = json.load(file)
+            if not isinstance(data, list):  # Stelle sicher, dass die Daten eine Liste sind
+                return []
+            return data
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+
+def write_json_log(data):
+    with open('log_data_host.json', 'w') as file:
+        json.dump(data, file, indent=4)  # Fügt Einrückungen hinzu, um die Lesbarkeit zu verbessern
+
+
+
 # Hilfsfunktion, um Daten in eine JSON-Datei zu loggen
+def host_log_data(host_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
+    # Stelle sicher, dass button_text ein String ist
+    if isinstance(button_text, ttk.TTkString):
+        button_text = str(button_text)
+    elif not isinstance(button_text, str):
+        button_text = repr(button_text)
 
-
-def host_log_data(host_name,button_text, x_wert, y_wert, auswahl_zeitpunkt):
-    data = {
+    logs = read_json_log()
+    logs.append({
         'host_name': host_name,
         'button_text': button_text,
         'x_wert': x_wert,
         'y_wert': y_wert,
         'auswahl_zeitpunkt': auswahl_zeitpunkt
-
-    }
-
-    with open('log_data_host.json', 'a') as file:  # 'a' um Daten an die Datei anzuhängen
-        json.dump(data, file)
-        file.write('\n')  # Neue Zeile für bessere Lesbarkeit in der Datei
+    })
+    write_json_log(logs)
 
 # Neue Methode zum Loggen des Spielstarts
-def log_game_start(host_name,args):
+def log_game_start(host_name, max_spieler):
+    logs = read_json_log()
     start_data = {
         'host_name': host_name,
         'Event': "Spiel gestartet",
-        'max_spieler': args.max_spieler,
+        'max_spieler': max_spieler,
         'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
     }
-    with open('log_data_host.json', 'a') as file:  # 'a' um Daten an die Datei anzuhängen
-        json.dump(start_data, file)
-        file.write('\n')  # Neue Zeile für bessere Lesbarkeit in der Datei
+    logs.append(start_data)
+    write_json_log(logs)
+
 
 def log_win(host_name):
-    start_data = {
+    logs = read_json_log()
+    win_data = {
         'host_name': host_name,
         'Event': "GEWONNEN",
         'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
     }
-    with open('log_data_host.json', 'a') as file:  # 'a' um Daten an die Datei anzuhängen
-        json.dump(start_data, file)
-        file.write('\n')  # Neue Zeile für bessere Lesbarkeit in der Datei
+    logs.append(win_data)
+    write_json_log(logs)
 
 def lade_woerter(woerter_pfad, xachse, yachse):
     try:
@@ -59,15 +79,16 @@ def lade_woerter(woerter_pfad, xachse, yachse):
         return str(e)
 
 
-def gewinner_screen(parent):
+def gewinner_screen(parent, personal_name):
     win_root = ttk.TTkWindow(parent=parent, title="Gewinner", border=True, pos=(35, 5), size=(30, 10))
-    ttk.TTkLabel(parent=win_root, text="Gewinner! Herzlichen Glückwunsch!", pos=(2, 2))
+    ttk.TTkLabel(win_root, text="Gewinner! Herzlichen Glückwunsch!", pos=(2, 2))
     win_root.raiseWidget()
-    log_win(args.personal_name)
+    log_win(personal_name)  # Loggen des Gewinnereignisses
+    win_root.show()
 
 
 def main(args):
-    log_game_start(args.personal_name)
+    log_game_start(args.personal_name, args.max_spieler)  # Korrigierter Funktionsaufruf
     # Überprüfung, ob die Werte für X- und Y-Achse identisch sind
     if args.xachse != args.yachse:
         print("Fehler: Die Werte für X- und Y-Achse müssen identisch sein,\num ein Spielfeld generieren zu koennen")
@@ -102,18 +123,25 @@ def main(args):
 
     klick_counter = [0]  # Klickzähler
 
+    klick_counter = [0]  # Klickzähler initialisieren
+
     def klicker(button, original_text, x, y):
         def auf_knopfdruck():
             if button.text() == "X":
-                button.setText(original_text)
+                logs = read_json_log()
+                if logs and 'button_text' in logs[-1] and logs[-1]['x_wert'] == x and logs[-1]['y_wert'] == y:
+                    button.setText(logs[-1]['button_text'])  # Setze den Text auf den letzten gespeicherten Wert
+                    logs.pop()  # Entferne den letzten Eintrag
+                    klick_counter[0] -= 1
+                    write_json_log(logs)
             else:
                 button.setText("X")
-                klick_counter[0] += 1  # Klickzähler erhöhen
-
+                klick_counter[0] += 1  # Erhöhe den Klickzähler
                 host_log_data(args.personal_name, str(original_text), x, y,
                               datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
-                if klick_counter[0] == 3:
-                    gewinner_screen(root)
+                if klick_counter[0] == 3:  # Prüfe, ob 3 X gesetzt wurden
+                    gewinner_screen(root, args.personal_name)  # Zeige Gewinnerscreen
+
         return auf_knopfdruck
 
     buttons = []
