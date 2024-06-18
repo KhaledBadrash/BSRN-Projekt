@@ -1,7 +1,6 @@
 import argparse
 import logging
 import random
-import time     #für den Gscreen
 from argparse import ArgumentParser, Namespace
 import TermTk as ttk
 from TermTk.TTkCore.signal import pyTTkSignal
@@ -11,7 +10,7 @@ from TermTk.TTkCore.string import TTkString
 from TermTk.TTkWidgets.widget import TTkWidget
 
 
-def ladeWoerter(woerterPfad, xachse, yachse):
+def lade_woerter(woerterPfad, xachse, yachse):
     try:
         with open(woerterPfad, 'r', encoding='utf-8') as file:
             woerter = [line.strip() for line in file.readlines()]
@@ -24,7 +23,7 @@ def ladeWoerter(woerterPfad, xachse, yachse):
 
 def gewinnerScreen():  #TBD
     root = ttk.TTk()
-    label = ttk.TTkLabel(parent=root, text="Gewinner! Herzlichen Glückwunsch!")
+    ttk.TTkLabel(parent=root, text="Gewinner! Herzlichen Glückwunsch!")
     root.mainloop()
 
 
@@ -35,7 +34,7 @@ def main(args):
     original_texts = {}
     groesse_feld = args.xachse
 
-    woerter = ladeWoerter(args.woerter_pfad, args.xachse, args.yachse)
+    woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
     klick_counter = [0]  # Zähler für die Klicks
     def klicker(button, original_text):
         def auf_knopfdruck():
@@ -83,4 +82,4 @@ if __name__ == "__main__":
     if args.newround:
         main(args)
 
-# Ubunto eingabe: python3 codegscreen.py -n woerter_datei 3 3
+# Ubunto eingabe: python3 bingo.py -n woerter_datei 3 3
