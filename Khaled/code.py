@@ -93,7 +93,7 @@ def main(args):
     for i in range(groesse_feld):
         for j in range(groesse_feld):
             if i == groesse_feld // 2 and j == groesse_feld // 2:
-                button = ttk.TTkButton(parent=root, border=True, text="X")
+                button = ttk.TTkButton(parent=root, border=True, text="JOKER")
                 original_texts[button] = button.text()
                 grid_layout.addWidget(button, i, j)
                 button.clicked.connect(klicker(button, original_texts[button], i, j))
@@ -113,11 +113,14 @@ def main(args):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('-n', '--newround', action='store_true')
-    parser.add_argument('woerter_pfad', help='Wörter Pfad')
-    parser.add_argument('xachse', help='X-Achse', type=int)
-    parser.add_argument('yachse', help='Y-Achse', type=int)
-    parser.add_argument('personal_name', help='Persönlicher Name')
+    parser.add_argument('woerter_pfad', nargs='?', help='Wörter Pfad')
+    parser.add_argument('xachse', nargs='?', help='X-Achse', type=int)
+    parser.add_argument('yachse', nargs='?', help='Y-Achse', type=int)
+    parser.add_argument('personal_name', nargs='?', help='Persönlicher Name')
     args = parser.parse_args()
+    #Ich habe nargs='?' hinzugefügt,damit die Argumente optional sind.
+    #Wenn ein Argument nicht angegeben wird, wird sein Wert als None gesetzt
+    #und wird in der Main dann schoener ueberprueft
 
     if args.newround:
         main(args)
