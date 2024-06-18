@@ -1,7 +1,7 @@
 import json
 from json import JSONDecodeError
 
-#tests zum lernen u. verstehen
+#tests zum lernen u. verstehen.
 
 # a Python object (dict):
 x = {
