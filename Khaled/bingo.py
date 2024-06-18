@@ -1,11 +1,25 @@
-# Diese Datei ist nur für mich zum Testen!!!
-
 import random
 from argparse import ArgumentParser, Namespace
 import TermTk as ttk
 import json
+from datetime import datetime
 
-json.decoder
+# Hilfsfunktion, um Daten in eine JSON-Datei zu loggen
+
+
+def log_data(host_name,button_text, x_wert, y_wert, auswahl_zeitpunkt):
+    data = {
+        'host_name': host_name,
+        'button_text': button_text,
+        'x_wert': x_wert,
+        'y_wert': y_wert,
+        'auswahl_zeitpunkt': auswahl_zeitpunkt
+
+    }
+
+    with open('log_data_host.json', 'a') as file:  # 'a' um Daten an die Datei anzuhängen
+        json.dump(data, file)
+        file.write('\n')  # Neue Zeile für bessere Lesbarkeit in der Datei
 
 
 def lade_woerter(woerter_pfad, xachse, yachse):
@@ -13,11 +27,14 @@ def lade_woerter(woerter_pfad, xachse, yachse):
         with open(woerter_pfad, 'r', encoding='utf-8') as file:
             woerter = [line.strip() for line in file.readlines()]
             anz_woerter = xachse * yachse
+            if len(woerter) < anz_woerter:
+                raise ValueError("Nicht genug Wörter in der Datei.")
             zufaellige_woerter = random.sample(woerter, anz_woerter)
             return zufaellige_woerter
     except FileNotFoundError:
-        erorfile = 'Die angegebene Datei konnte nicht gefunden werden'
-        return erorfile
+        return 'Die angegebene Datei konnte nicht gefunden werden'
+    except ValueError as e:
+        return str(e)
 
 
 def gewinner_screen(parent):
@@ -34,37 +51,42 @@ def main(args):
     groesse_feld = args.xachse
 
     woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
-    klick_counter = [0]  # Zähler für die Klicks
+    if isinstance(woerter, str):  # Fehlermeldungen behandeln
+        print(woerter)
+        return
 
-    def klicker(button, original_text):
+    klick_counter = [0]  # Klickzähler
+
+    def klicker(button, original_text, x, y):
         def auf_knopfdruck():
             if button.text() == "X":
                 button.setText(original_text)
             else:
                 button.setText("X")
-                klick_counter[0] += 1  # Klickzähler
-                # Überprüfen, ob der Gewinnerscreen nach 3 Klicks angezeigt werden soll
-                # hier könnte man dann die ganzen Überprüfungen mit JSON einbauen
+                klick_counter[0] += 1  # Klickzähler erhöhen
+
+                log_data(args.personal_name, str(original_text), x, y, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
                 if klick_counter[0] == 3:
                     gewinner_screen(root)
         return auf_knopfdruck
 
     buttons = []
+    wort_index = 0  # Index für die zufälligen Wörter
     for i in range(groesse_feld):
-        row = []
         for j in range(groesse_feld):
             if i == groesse_feld // 2 and j == groesse_feld // 2:
                 button = ttk.TTkButton(parent=root, border=True, text="X")
                 original_texts[button] = button.text()
                 grid_layout.addWidget(button, i, j)
+                button.clicked.connect(klicker(button, original_texts[button], i, j))
             else:
-                text = random.choice(woerter)
+                text = woerter[wort_index]
+                wort_index += 1
                 button = ttk.TTkButton(parent=root, border=True, text=text)
                 original_texts[button] = button.text()
                 grid_layout.addWidget(button, i, j)
-                button.clicked.connect(klicker(button, original_texts[button]))
-            row.append(button)
-        buttons.append(row)
+                button.clicked.connect(klicker(button, original_texts[button], i, j))
+            buttons.append(button)
 
     root.update()
     root.mainloop()
@@ -76,9 +98,8 @@ if __name__ == "__main__":
     parser.add_argument('woerter_pfad', help='Wörter Pfad')
     parser.add_argument('xachse', help='X-Achse', type=int)
     parser.add_argument('yachse', help='Y-Achse', type=int)
+    parser.add_argument('personal_name', help='Persönlicher Name')
     args = parser.parse_args()
 
     if args.newround:
         main(args)
-
-# Ubuntu Eingabe: python3 code.py -n woerter_datei 3 3
