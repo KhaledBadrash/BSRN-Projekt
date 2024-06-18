@@ -53,8 +53,7 @@ def gewinner_screen(parent):
 
 
 def main(args):
-    host_log_data(args.personal_name, "Spiel gestartet", 0, 0, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
-
+    log_game_start(args.personal_name)
     # Überprüfung, ob die Werte für X- und Y-Achse identisch sind
     if args.xachse != args.yachse:
         print("Fehler: Die Werte für X- und Y-Achse müssen identisch sein,\num ein Spielfeld generieren zu koennen")
