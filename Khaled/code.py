@@ -26,10 +26,12 @@ def host_log_data(host_name,button_text, x_wert, y_wert, auswahl_zeitpunkt):
 def log_game_start(host_name):
     start_data = {
         'host_name': host_name,
-        'event': "Spiel gestartet",
+        'Event': "Spiel gestartet",
         'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
     }
-
+    with open('log_data_host.json', 'a') as file:  # 'a' um Daten an die Datei anzuhängen
+        json.dump(start_data, file)
+        file.write('\n')  # Neue Zeile für bessere Lesbarkeit in der Datei
 
 def lade_woerter(woerter_pfad, xachse, yachse):
     try:

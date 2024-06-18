@@ -1,2 +1,6 @@
-,
-{"host_name": "khaled", "button_text": "Spiel gestartet", "x_wert": 0, "y_wert": 0, "auswahl_zeitpunkt": "18-06-2024 21:44:33 Uhr"}
+,{"host_name": "khaled", "event": "Spiel gestartet", "timestamp": "18-06-2024 23:29:14 Uhr"}
+{"host_name": "khaled", "button_text": "Load Balancing", "x_wert": 0, "y_wert": 1, "auswahl_zeitpunkt": "18-06-2024 23:29:15 Uhr"}
+{"host_name": "khaled", "button_text": "Zugriff", "x_wert": 0, "y_wert": 2, "auswahl_zeitpunkt": "18-06-2024 23:29:15 Uhr"}
+{"host_name": "khaled", "button_text": "Token", "x_wert": 1, "y_wert": 2, "auswahl_zeitpunkt": "18-06-2024 23:29:16 Uhr"}
+{"host_name": "khaled", "Event": "Spiel gestartet", "timestamp": "18-06-2024 23:29:59 Uhr,"}
+{"host_name": "khaled", "button_text": "Encryption", "x_wert": 0, "y_wert": 1, "auswahl_zeitpunkt": "18-06-2024 23:30:01 Uhr"}
