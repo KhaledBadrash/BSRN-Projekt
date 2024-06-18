@@ -1,11 +1,12 @@
-import random #zufalls...
-import TermTk as ttk #gui as -- ist für abkürzung
+import random
+import TermTk as ttk   #gui as -- ist für abkürzung
 from TermTk.TTkCore.signal import pyTTkSignal
 from TermTk.TTkCore.cfg import TTkCfg
 from TermTk.TTkCore.constant import TTkK
 from TermTk.TTkCore.string import TTkString
 from TermTk.TTkCore.signal import pyTTkSignal
 from TermTk.TTkWidgets.widget import TTkWidget#TBD
+
 
 gridLayout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0) #um das feld anziegen zu lassen und die Formatierung
 root = ttk.TTk(layout=gridLayout)   #root --> APP / 'Mainbenutzer'?                   #Column? --> Notwendig?

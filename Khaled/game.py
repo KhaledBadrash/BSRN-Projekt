@@ -2,8 +2,8 @@ import logging
 import random
 from argparse import ArgumentParser, Namespace
 
-
-def lade_woerter(woerter_pfad, xachse, yachse): #info
+#klassennamen groser buchstabe
+def ladeWoerter(woerter_pfad, xachse, yachse): #info
 
     try:
         with open(woerter_pfad, 'r', encoding='utf-8') as file:
@@ -29,9 +29,9 @@ def rechner_prog():
     parser.add_argument('-y', '--yachse', help='Y-Achse', type=int)
 
     args: Namespace = parser.parse_args()
-
+    #woerter_datei
     if args.start == True:
-        lade_woerter(args.woerter_pfad, args.x, args.y)
+        ladeWoerter(args.woerter_pfad, args.x, args.y)
 
 
 
