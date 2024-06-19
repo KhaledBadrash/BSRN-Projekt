@@ -207,5 +207,6 @@ if __name__ == "__main__":
         clear_json_log()  # Leere die JSON-Datei
         main(args)
 
+
         #python3 code.py -n woerter_datei 3 3 khaled 2
 
