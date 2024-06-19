@@ -5,7 +5,7 @@ import TermTk as ttk
 import json
 from datetime import datetime
 
-def read_json_log(filename):
+def read_json_log(filename): #Lesen der JSON-Logs
     try:
         with open(filename, 'r') as file:
             data = json.load(file)
@@ -15,13 +15,14 @@ def read_json_log(filename):
     except (FileNotFoundError, json.JSONDecodeError):
         return []
 
-def write_json_log(filename, data):
+def write_json_log(filename, data): #Schreiben der JSON-Logs
     with open(filename, 'w') as file:
         json.dump(data, file, indent=4)
 
-def clear_json_log(filename):
+def clear_json_log(filename): #Erstellung und Löschung der JSON-Logs
     write_json_log(filename, [])
 
+#Hinzufügen von Log-Einträgen
 def host_log_data(filename, host_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
     if isinstance(button_text, ttk.TTkString):
         button_text = str(button_text)
@@ -38,6 +39,7 @@ def host_log_data(filename, host_name, button_text, x_wert, y_wert, auswahl_zeit
     })
     write_json_log(filename, logs)
 
+#Spielstart-Log
 def log_game_start(filename, host_name, max_spieler):
     logs = read_json_log(filename)
     start_data = {
@@ -49,6 +51,7 @@ def log_game_start(filename, host_name, max_spieler):
     logs.append(start_data)
     write_json_log(filename, logs)
 
+#Gewinner-Log
 def log_win(filename, host_name):
     logs = read_json_log(filename)
     win_data = {
@@ -171,7 +174,7 @@ def handle_game(pipe_path, args):
     root.update()
     root.mainloop()
 
-def main(args):
+def main(args): #Erstellung der Pipe
     pipe_path = "/tmp/bingo_pipe"
     if not os.path.exists(pipe_path):
         os.mkfifo(pipe_path)
@@ -179,11 +182,11 @@ def main(args):
     if args.newround:
         clear_json_log('log_data_host.json')
 
-    with open(pipe_path, 'w') as pipe:
+    with open(pipe_path, 'w') as pipe: #Verwendung der Pipe zum Schreiben
         pipe.write(json.dumps(vars(args)))
         pipe.write('\n')
 
-    with open(pipe_path, 'r') as pipe:
+    with open(pipe_path, 'r') as pipe: #Verwendung der Pipe zum Lesen
         while True:
             line = pipe.readline()
             if not line:
