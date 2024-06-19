@@ -22,7 +22,6 @@ def write_json_log(data):
         json.dump(data, file, indent=4)  # Fügt Einrückungen hinzu, um die Lesbarkeit zu verbessern
 
 
-
 # Hilfsfunktion, um Daten in eine JSON-Datei zu loggen
 def host_log_data(host_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
     # Stelle sicher, dass button_text ein String ist
@@ -40,6 +39,7 @@ def host_log_data(host_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
         'auswahl_zeitpunkt': auswahl_zeitpunkt
     })
     write_json_log(logs)
+
 
 # Neue Methode zum Loggen des Spielstarts
 def log_game_start(host_name, max_spieler):
@@ -63,6 +63,7 @@ def log_win(host_name):
     }
     logs.append(win_data)
     write_json_log(logs)
+
 
 def lade_woerter(woerter_pfad, xachse, yachse):
     try:
@@ -109,7 +110,6 @@ def main(args):
         print("Fehler: Es wurde kein Host-Name angegeben.")
         return
 
-
     grid_layout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0)
     root = ttk.TTk(layout=grid_layout)
 
@@ -125,38 +125,22 @@ def main(args):
 
     klick_counter = [0]  # Klickzähler initialisieren
 
-    def check_bingo(logs, groesse_feld):
-        board = [[0] * groesse_feld for _ in range(groesse_feld)]
-        for log in logs:
-            # Überprüfe, ob die erforderlichen Schlüssel im Log vorhanden sind
-            if 'button_text' in log and 'y_wert' in log and 'x_wert' in log:
-                if log['button_text'] == 'X' or log['button_text'] == 'JOKER':
-                    board[log['y_wert']][log['x_wert']] = 1
-
-        # Prüfen der Reihen, Spalten und Diagonalen
-        for i in range(groesse_feld):
-            if all(board[i][j] == 1 for j in range(groesse_feld)) or all(board[j][i] == 1 for j in range(groesse_feld)):
-                return True  # Bingo in einer Reihe oder Spalte
-        if all(board[i][i] == 1 for i in range(groesse_feld)) or all(
-                board[i][groesse_feld - 1 - i] == 1 for i in range(groesse_feld)):
-            return True  # Bingo in einer Diagonale
-        return False
-
-
     def klicker(button, original_text, x, y):
         def auf_knopfdruck():
+            # ein schritt zurück
             if button.text() == "X":
                 logs = read_json_log()
                 if logs and 'button_text' in logs[-1] and logs[-1]['x_wert'] == x and logs[-1]['y_wert'] == y:
                     button.setText(logs[-1]['button_text'])  # Setze den Text auf den letzten gespeicherten Wert
                     logs.pop()  # Entferne den letzten Eintrag
+                    klick_counter[0] -= 1
                     write_json_log(logs)
-            else:
+            elif button.text() != 'JOKER':
                 button.setText("X")
+                klick_counter[0] += 1  # Erhöhe den Klickzähler
                 host_log_data(args.personal_name, str(original_text), x, y,
                               datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
-                logs = read_json_log()
-                if check_bingo(logs, groesse_feld):
+                if klick_counter[0] == 3:  # Prüfe, ob 3 X gesetzt wurden
                     gewinner_screen(root, args.personal_name)  # Zeige Gewinnerscreen
 
         return auf_knopfdruck
@@ -193,14 +177,12 @@ if __name__ == "__main__":
     parser.add_argument('max_spieler', nargs='?', help='Maximale Anzahl an Spielern', type=int)
 
     args = parser.parse_args()
-    #Ich habe nargs='?' hinzugefügt,damit die Argumente optional sind.
-    #Wenn ein Argument nicht angegeben wird, wird sein Wert als None gesetzt
-    #und wird in der Main dann schoener ueberprueft
+    # Ich habe nargs='?' hinzugefügt,damit die Argumente optional sind.
+    # Wenn ein Argument nicht angegeben wird, wird sein Wert als None gesetzt
+    # und wird in der Main dann schoener ueberprueft
 
     if args.newround:
         main(args)
 
-        #python3 code.py -n woerter_datei 3 3 khaled
+        # python3 code.py -n woerter_datei 3 3 khaled 2
 
-
-    #CHECK BINGO FUNKTIONIERT NOCH NICHT GANZ
