@@ -3,55 +3,32 @@
         "host_name": "khaled",
         "Event": "Spiel gestartet",
         "max_spieler": 2,
-        "timestamp": "19-06-2024 17:48:50 Uhr"
+        "timestamp": "19-06-2024 21:51:15 Uhr"
     },
     {
         "host_name": "khaled",
-        "button_text": "JOKER",
-        "x_wert": 2,
-        "y_wert": 2,
-        "auswahl_zeitpunkt": "19-06-2024 17:48:50 Uhr"
+        "JOKER": "X",
+        "x_wert": 1,
+        "y_wert": 1,
+        "auswahl_zeitpunkt": "19-06-2024 21:51:15 Uhr"
     },
     {
         "host_name": "khaled",
         "button_text": "X",
         "x_wert": 0,
         "y_wert": 0,
-        "auswahl_zeitpunkt": "19-06-2024 17:49:32 Uhr"
-    },
-    {
-        "host_name": "khaled",
-        "button_text": "X",
-        "x_wert": 1,
-        "y_wert": 1,
-        "auswahl_zeitpunkt": "19-06-2024 17:49:33 Uhr"
+        "auswahl_zeitpunkt": "19-06-2024 21:51:17 Uhr"
     },
     {
         "host_name": "khaled",
         "button_text": "X",
         "x_wert": 2,
-        "y_wert": 3,
-        "auswahl_zeitpunkt": "19-06-2024 17:49:34 Uhr"
+        "y_wert": 2,
+        "auswahl_zeitpunkt": "19-06-2024 21:51:17 Uhr"
     },
     {
         "host_name": "khaled",
-        "button_text": "X",
-        "x_wert": 3,
-        "y_wert": 4,
-        "auswahl_zeitpunkt": "19-06-2024 17:49:34 Uhr"
-    },
-    {
-        "host_name": "khaled",
-        "button_text": "X",
-        "x_wert": 3,
-        "y_wert": 3,
-        "auswahl_zeitpunkt": "19-06-2024 17:49:40 Uhr"
-    },
-    {
-        "host_name": "khaled",
-        "button_text": "X",
-        "x_wert": 4,
-        "y_wert": 4,
-        "auswahl_zeitpunkt": "19-06-2024 17:49:41 Uhr"
+        "Event": "GEWONNEN",
+        "timestamp": "19-06-2024 21:51:18 Uhr"
     }
 ]

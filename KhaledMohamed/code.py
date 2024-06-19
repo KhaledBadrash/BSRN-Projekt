@@ -43,6 +43,25 @@ def host_log_data(host_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
     })
     write_json_log(logs)
 
+def log_joker(host_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
+    # Stelle sicher, dass button_text ein String ist
+    if isinstance(button_text, ttk.TTkString):
+        button_text = str(button_text)
+    elif not isinstance(button_text, str):
+        button_text = repr(button_text)
+
+    logs = read_json_log()
+    logs.append({
+        'host_name': host_name,
+        'JOKER': button_text,
+        'x_wert': x_wert,
+        'y_wert': y_wert,
+        'auswahl_zeitpunkt': auswahl_zeitpunkt
+    })
+    write_json_log(logs)
+
+
+
 
 # Neue Methode zum Loggen des Spielstarts
 def log_game_start(host_name, max_spieler):
@@ -126,7 +145,8 @@ def main(args):
 
     def pruefe_bingo(max_feld, logs):
         # Extract positions of all "X" marks from the logs
-        marked_positions = [(log.get('x_wert'), log.get('y_wert')) for log in logs if log.get('button_text') == 'X']
+        marked_positions = [(log.get('x_wert'), log.get('y_wert')) for log in logs if log.get('button_text') == 'X' or
+                            log.get('JOKER') == 'X']
 
         # Check horizontal lines
         for i in range(max_feld):
@@ -137,6 +157,16 @@ def main(args):
             # Check vertical lines
             if all((j, i) in marked_positions for j in range(max_feld)):
                 return True
+            # Check diagonal lines (top-left to bottom-right)
+            if all((j, j) in marked_positions for j in range(max_feld)):
+                return True
+
+            # Check diagonal lines (top-right to bottom-left)
+            if all((j, max_feld - 1 - j) in marked_positions for j in range(max_feld)):
+                return True
+
+            return False
+
 
     def klicker(button, original_text, x, y):
         def auf_knopfdruck():
@@ -162,6 +192,7 @@ def main(args):
                     'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
                 })
                 write_json_log(logs)
+
                 if pruefe_bingo(groesse_feld, logs):  # Check if Bingo condition is met
                     gewinner_screen(root, args.personal_name)
 
@@ -176,8 +207,8 @@ def main(args):
                 original_texts[button] = button.text()
                 grid_layout.addWidget(button, i, j)
                 button.clicked.connect(klicker(button, original_texts[button], i, j))
-                host_log_data(args.personal_name, "JOKER", i, j,
-                              datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))  # Logge den Joker
+                log_joker(args.personal_name, "X", i, j,
+                              datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))# Logge den Joker
 
             else:
                 text = woerter[wort_index]
