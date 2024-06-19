@@ -172,10 +172,11 @@ def main(args):
     for i in range(groesse_feld):
         for j in range(groesse_feld):
             if i == groesse_feld // 2 and j == groesse_feld // 2:
-                button = ttk.TTkButton(parent=root, border=True, text="JOKER")
+                button = ttk.TTkButton(parent=root, border=True, text="X")
                 original_texts[button] = button.text()
                 grid_layout.addWidget(button, i, j)
                 button.clicked.connect(klicker(button, original_texts[button], i, j))
+
             else:
                 text = woerter[wort_index]
                 wort_index += 1
