@@ -147,7 +147,7 @@ def main(args):
 
             return False
 
-    return False
+
     def klicker(button, original_text, x, y):
         def auf_knopfdruck():
             logs = read_json_log()
