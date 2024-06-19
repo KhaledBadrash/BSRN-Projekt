@@ -138,13 +138,8 @@ def main(args):
             if all((j, i) in marked_positions for j in range(max_feld)):
                 return True
 
-            # Check diagonal lines (top-left to bottom-right)
-            if all((j, j) in marked_positions for j in range(max_feld)):
-                return True
 
-            # Check diagonal lines (top-right to bottom-left)
-            if all((j, max_feld - 1 - j) in marked_positions for j in range(max_feld)):
-                return True
+
 
     return False
     def klicker(button, original_text, x, y):
@@ -171,6 +166,7 @@ def main(args):
                     'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
                 })
                 write_json_log(logs)
+
                 if pruefe_bingo(groesse_feld, logs):  # Check if Bingo condition is met
                     gewinner_screen(root, args.personal_name)
 
