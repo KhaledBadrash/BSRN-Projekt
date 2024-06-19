@@ -138,7 +138,6 @@ def main(args):
             if all((j, i) in marked_positions for j in range(max_feld)):
                 return True
 
-
     def klicker(button, original_text, x, y):
         def auf_knopfdruck():
             logs = read_json_log()
