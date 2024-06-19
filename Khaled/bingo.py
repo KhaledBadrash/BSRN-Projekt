@@ -183,5 +183,5 @@ if __name__ == "__main__":
     if args.newround:
         main(args)
 
-        #python3 code.py -n woerter_datei 3 3 khaled
+        #python3 code.py -n woerter_datei 3 3 khaled 2
 

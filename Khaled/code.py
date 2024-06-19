@@ -125,24 +125,6 @@ def main(args):
 
     klick_counter = [0]  # Klickzähler initialisieren
 
-    def check_bingo(logs, groesse_feld):
-        board = [[0] * groesse_feld for _ in range(groesse_feld)]
-        for log in logs:
-            # Überprüfe, ob die erforderlichen Schlüssel im Log vorhanden sind
-            if 'button_text' in log and 'y_wert' in log and 'x_wert' in log:
-                if log['button_text'] == 'X' or log['button_text'] == 'JOKER':
-                    board[log['y_wert']][log['x_wert']] = 1
-
-        # Prüfen der Reihen, Spalten und Diagonalen
-        for i in range(groesse_feld):
-            if all(board[i][j] == 1 for j in range(groesse_feld)) or all(board[j][i] == 1 for j in range(groesse_feld)):
-                return True  # Bingo in einer Reihe oder Spalte
-        if all(board[i][i] == 1 for i in range(groesse_feld)) or all(
-                board[i][groesse_feld - 1 - i] == 1 for i in range(groesse_feld)):
-            return True  # Bingo in einer Diagonale
-        return False
-
-
     def klicker(button, original_text, x, y):
         def auf_knopfdruck():
             if button.text() == "X":
@@ -150,13 +132,14 @@ def main(args):
                 if logs and 'button_text' in logs[-1] and logs[-1]['x_wert'] == x and logs[-1]['y_wert'] == y:
                     button.setText(logs[-1]['button_text'])  # Setze den Text auf den letzten gespeicherten Wert
                     logs.pop()  # Entferne den letzten Eintrag
+                    klick_counter[0] -= 1
                     write_json_log(logs)
             else:
                 button.setText("X")
+                klick_counter[0] += 1  # Erhöhe den Klickzähler
                 host_log_data(args.personal_name, str(original_text), x, y,
                               datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
-                logs = read_json_log()
-                if check_bingo(logs, groesse_feld):
+                if klick_counter[0] == 3:  # Prüfe, ob 3 X gesetzt wurden
                     gewinner_screen(root, args.personal_name)  # Zeige Gewinnerscreen
 
         return auf_knopfdruck
@@ -200,7 +183,5 @@ if __name__ == "__main__":
     if args.newround:
         main(args)
 
-        #python3 code.py -n woerter_datei 3 3 khaled
+        #python3 code.py -n woerter_datei 3 3 khaled 2
 
-
-    #CHECK BINGO FUNKTIONIERT NOCH NICHT GANZ
