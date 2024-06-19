@@ -121,7 +121,6 @@ def main(args):
         print(woerter)
         return
 
-    klick_counter = [0]  # Klickzähler
 
     klick_counter = [0]  # Klickzähler initialisieren
 
@@ -134,7 +133,7 @@ def main(args):
                     logs.pop()  # Entferne den letzten Eintrag
                     klick_counter[0] -= 1
                     write_json_log(logs)
-            else:
+            elif button.text() != "JOKER":
                 button.setText("X")
                 klick_counter[0] += 1  # Erhöhe den Klickzähler
                 host_log_data(args.personal_name, str(original_text), x, y,
