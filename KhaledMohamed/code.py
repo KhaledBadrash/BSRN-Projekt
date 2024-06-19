@@ -146,7 +146,7 @@ def main(args):
                 log_index = next(
                     (index for (index, d) in enumerate(logs) if d.get("x_wert") == x and d.get("y_wert") == y),
                     None)
-                if log_index is not None:
+                if log_index is not None and log_index == len(logs) - 1:
                     logs.pop(log_index)  # Remove the log entry
                     button.setText(original_text)  # Set button text to original text
                     write_json_log(logs)
@@ -176,7 +176,7 @@ def main(args):
                 original_texts[button] = button.text()
                 grid_layout.addWidget(button, i, j)
                 button.clicked.connect(klicker(button, original_texts[button], i, j))
-                host_log_data(args.personal_name, "X", i, j,
+                host_log_data(args.personal_name, "JOKER", i, j,
                               datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))  # Logge den Joker
 
             else:
