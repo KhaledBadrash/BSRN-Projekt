@@ -106,7 +106,7 @@ def main(args):
         return
 
     if not args.max_spieler:
-        print("Fehler: Es wurde kein Host-Name angegeben.")
+        print("Fehler: SIe haben keine maximale Spieleranzahl angegeben.")
         return
 
 
@@ -136,7 +136,7 @@ def main(args):
                     logs.pop()  # Entferne den letzten Eintrag
                     klick_counter[0] -= 1
                     write_json_log(logs)
-            elif button.text != 'JOKER':
+            elif button.text() != 'JOKER':
                 button.setText("X")
                 klick_counter[0] += 1  # Erhöhe den Klickzähler
                 host_log_data(args.personal_name, str(original_text), x, y,
