@@ -126,7 +126,7 @@ def main(args):
 
     def pruefe_bingo(max_feld, logs):
         # Extract positions of all "X" marks from the logs
-        marked_positions = [(log.get('x_wert'), log.get('y_wert')) for log in logs if log.get('button_text') == 'X'or "JOKER"]
+        marked_positions = [(log.get('x_wert'), log.get('y_wert')) for log in logs if log.get('button_text') == 'X']
 
         # Check horizontal lines
         for i in range(max_feld):
@@ -176,6 +176,8 @@ def main(args):
                 original_texts[button] = button.text()
                 grid_layout.addWidget(button, i, j)
                 button.clicked.connect(klicker(button, original_texts[button], i, j))
+                host_log_data(args.personal_name, "X", i, j,
+                              datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))  # Logge den Joker
 
             else:
                 text = woerter[wort_index]
