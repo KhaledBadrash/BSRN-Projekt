@@ -1,5 +1,6 @@
 import os
 import random
+import sys
 from argparse import ArgumentParser, Namespace
 import TermTk as ttk
 import json
@@ -21,8 +22,32 @@ def write_json_log(data):
     with open('log_data_host.json', 'w') as file:
         json.dump(data, file, indent=4)  # Fügt Einrückungen hinzu, um die Lesbarkeit zu verbessern
 
+def read_json_log_spieler():
+    try:
+        with open('log_data_spieler.json', 'r') as file:
+            data = json.load(file)
+            if not isinstance(data, list):
+                return []
+            return data
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+def write_json_log_spieler(data):
+    with open('log_data_spieler.json', 'w') as file:
+        json.dump(data, file, indent=4)
+
+def log_spieler_data(player_name, action, details):
+    logs = read_json_log_spieler()
+    logs.append({
+        'player_name': player_name,
+        'action': action,
+        'details': details,
+        'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
+    })
+    write_json_log_spieler(logs)
 def clear_json_log():
     write_json_log([])  # Schreibe eine leere Liste in die JSON-Datei
+    write_json_log_spieler([])
 
 
 # Hilfsfunktion, um Daten in eine JSON-Datei zu loggen
@@ -108,9 +133,39 @@ def gewinner_screen(parent, personal_name):
     log_win(personal_name)  # Loggen des Gewinnereignisses
     win_root.show()
 
+def handle_player(player_name, woerter_pfad, xachse, yachse):
+    print(f"{player_name} ist dem Spiel beigetreten und spielt auf einem {xachse}x{yachse} Feld.")
+    log_spieler_data(player_name, "Spiel beigetreten", f"Spielt auf einem {xachse}x{yachse} Feld.")
+    # Weitere Spielerlogik hier implementieren
+    # Beispiel: Loggen eines Zuges
+    log_spieler_data(player_name, "Zug gemacht", "Spieler hat seinen Zug auf dem Feld XY gemacht.")
+
+def start_game(personal_name, max_players, woerter_pfad, xachse, yachse):
+    print(f"Host {personal_name} startet das Spiel und wartet auf {max_players} Spieler...")
+    players = []
+    for i in range(max_players):
+        pid = os.fork()
+        if pid == 0:  # Kindprozess
+            player_name = input(f"Name für Spieler {i + 1}: ")
+            handle_player(player_name, woerter_pfad, xachse, yachse)
+            sys.exit()  # Beendet den Kindprozess sicher nach der Spielerlogik
+        else:
+            players.append(pid)
+
+    for pid in players:
+        os.waitpid(pid, 0)  # Wartet auf die Beendigung jedes Kindprozesses
+
+    # Nachdem alle Spieler beigetreten sind, könnte hier zusätzliche Logik für den Host stehen
+    return players  # Optional, wenn Sie Spieler PIDs für weitere Verwendung zurückgeben möchten
+
+    # Nachdem alle Spieler beigetreten sind, könnte hier zusätzliche Logik für den Host stehen
 
 def main(args):
-    log_game_start(args.personal_name, args.max_spieler)  # Korrigierter Funktionsaufruf
+    if args.newround:
+        clear_json_log()  # Leere die JSON-Datei
+        players = start_game(args.personal_name, args.max_spieler, args.woerter_pfad, args.xachse, args.yachse)
+        log_game_start(args.personal_name, args.max_spieler)  # Spielstart loggen, nachdem alle Spieler beigetreten sind
+
     # Überprüfung, ob die Werte für X- und Y-Achse identisch sind
     if args.xachse != args.yachse:
         print("Fehler: Die Werte für X- und Y-Achse müssen identisch sein,\num ein Spielfeld generieren zu koennen")
@@ -225,6 +280,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
+
     parser.add_argument('-n', '--newround', action='store_true')
     parser.add_argument('woerter_pfad', nargs='?', help='Wörter Pfad')
     parser.add_argument('xachse', nargs='?', help='X-Achse', type=int)
@@ -237,8 +293,7 @@ if __name__ == "__main__":
     #Wenn ein Argument nicht angegeben wird, wird sein Wert als None gesetzt
     #und wird in der Main dann schoener ueberprueft
 
-    if args.newround:
-        clear_json_log()  # Leere die JSON-Datei
+    if args.woerter_pfad and args.xachse and args.yachse and args.personal_name and args.max_spieler:
         main(args)
 
 
