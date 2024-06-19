@@ -125,8 +125,10 @@ def main(args):
 
     klick_counter = [0]  # Klickzähler initialisieren
 
+
     def klicker(button, original_text, x, y):
         def auf_knopfdruck():
+            #ein schritt zurück
             if button.text() == "X":
                 logs = read_json_log()
                 if logs and 'button_text' in logs[-1] and logs[-1]['x_wert'] == x and logs[-1]['y_wert'] == y:
@@ -134,7 +136,7 @@ def main(args):
                     logs.pop()  # Entferne den letzten Eintrag
                     klick_counter[0] -= 1
                     write_json_log(logs)
-            else:
+            elif button.text != 'JOKER':
                 button.setText("X")
                 klick_counter[0] += 1  # Erhöhe den Klickzähler
                 host_log_data(args.personal_name, str(original_text), x, y,
