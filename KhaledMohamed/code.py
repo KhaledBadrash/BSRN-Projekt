@@ -21,6 +21,17 @@ def write_json_log(data):
     with open('log_data_host.json', 'w') as file:
         json.dump(data, file, indent=4)  # Fügt Einrückungen hinzu, um die Lesbarkeit zu verbessern
 
+            # Check diagonal lines (top-left to bottom-right)
+            if all((j, j) in marked_positions for j in range(max_feld)):
+                return True
+
+            # Check diagonal lines (top-right to bottom-left)
+            if all((j, max_feld - 1 - j) in marked_positions for j in range(max_feld)):
+                return True
+
+        return False
+
+    def check_bingo:
 
 
 # Hilfsfunktion, um Daten in eine JSON-Datei zu loggen
@@ -135,7 +146,15 @@ def main(args):
             # Check vertical lines
             if all((j, i) in marked_positions for j in range(max_feld)):
                 return True
+            # Check diagonal lines (top-left to bottom-right)
+            if all((j, j) in marked_positions for j in range(max_feld)):
+                return True
 
+            # Check diagonal lines (top-right to bottom-left)
+            if all((j, max_feld - 1 - j) in marked_positions for j in range(max_feld)):
+                return True
+
+            return False
     def klicker(button, original_text, x, y):
         def auf_knopfdruck():
             logs = read_json_log()
