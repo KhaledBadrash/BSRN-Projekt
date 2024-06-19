@@ -21,6 +21,8 @@ def write_json_log(data):
     with open('log_data_host.json', 'w') as file:
         json.dump(data, file, indent=4)  # Fügt Einrückungen hinzu, um die Lesbarkeit zu verbessern
 
+def clear_json_log():
+    write_json_log([])  # Schreibe eine leere Liste in die JSON-Datei
 
 
 # Hilfsfunktion, um Daten in eine JSON-Datei zu loggen
@@ -136,6 +138,7 @@ def main(args):
             if all((j, i) in marked_positions for j in range(max_feld)):
                 return True
 
+
     def klicker(button, original_text, x, y):
         def auf_knopfdruck():
             logs = read_json_log()
@@ -202,6 +205,7 @@ if __name__ == "__main__":
     #und wird in der Main dann schoener ueberprueft
 
     if args.newround:
+        clear_json_log()  # Leere die JSON-Datei
         main(args)
 
         #python3 code.py -n woerter_datei 3 3 khaled 2
