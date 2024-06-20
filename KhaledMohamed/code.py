@@ -439,7 +439,7 @@ if __name__ == "__main__":
     if '--newround' in sys.argv:
         args = parse_host_args()
         if args.newround:
-            print("Neues Spiel wird gestartet...")
+            print("Neues Spiel wird gestartet.. .")
             set_game_status(True)
             main_host(args)
     elif '--join_into_round' in sys.argv:
