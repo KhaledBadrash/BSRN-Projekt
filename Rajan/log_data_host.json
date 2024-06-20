@@ -3,39 +3,39 @@
         "host_name": "khaled",
         "Event": "Spiel gestartet",
         "max_spieler": 2,
-        "timestamp": "19-06-2024 20:06:30 Uhr"
+        "timestamp": "20-06-2024 12:05:58 Uhr"
     },
     {
         "host_name": "khaled",
         "button_text": "JOKER",
         "x_wert": 1,
         "y_wert": 1,
-        "auswahl_zeitpunkt": "19-06-2024 20:06:30 Uhr"
+        "auswahl_zeitpunkt": "20-06-2024 12:05:58 Uhr"
     },
     {
         "host_name": "khaled",
         "button_text": "X",
         "x_wert": 0,
         "y_wert": 0,
-        "auswahl_zeitpunkt": "19-06-2024 20:06:37 Uhr"
+        "auswahl_zeitpunkt": "20-06-2024 12:06:00 Uhr"
     },
     {
         "host_name": "khaled",
         "button_text": "X",
         "x_wert": 1,
         "y_wert": 0,
-        "auswahl_zeitpunkt": "19-06-2024 20:06:39 Uhr"
+        "auswahl_zeitpunkt": "20-06-2024 12:06:01 Uhr"
     },
     {
         "host_name": "khaled",
         "button_text": "X",
         "x_wert": 2,
         "y_wert": 0,
-        "auswahl_zeitpunkt": "19-06-2024 20:06:40 Uhr"
+        "auswahl_zeitpunkt": "20-06-2024 12:06:02 Uhr"
     },
     {
         "host_name": "khaled",
         "Event": "GEWONNEN",
-        "timestamp": "19-06-2024 20:06:40 Uhr"
+        "timestamp": "20-06-2024 12:06:02 Uhr"
     }
 ]

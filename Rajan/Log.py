@@ -3,11 +3,7 @@ import logging
 from datetime import datetime
 import random
 import TermTk as ttk
-from TermTk.TTkCore.signal import pyTTkSignal
-from TermTk.TTkCore.cfg import TTkCfg
-from TermTk.TTkCore.constant import TTkK
-from TermTk.TTkCore.string import TTkString
-from TermTk.TTkWidgets.widget import TTkWidget
+
 
 # Logging configuration
 logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s - %(message)s')
