@@ -208,6 +208,11 @@ def gewinner_screen(parent, personal_name):
 def main_player(args):
     log_game_start(args.player_name, args.max_spieler)  # Korrigierter Funktionsaufruf
     # Überprüfung, ob die Werte für X- und Y-Achse identisch sind
+    if check_game_status():
+        print(f"{args.player_name} tritt dem Spiel bei...")
+    else:
+        print("Kein aktives Spiel gefunden. Bitte warten Sie, bis ein Host ein Spiel startet.")
+
     if args.xachse != args.yachse:
         print("Fehler: Die Werte für X- und Y-Achse müssen identisch sein,\num ein Spielfeld generieren zu koennen")
         return
@@ -423,8 +428,10 @@ def main_host(args):
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument('-n', '--newround', action='store_true')
+    parser = ArgumentParser(description="Startet das Spiel als Host oder tritt einem bestehenden Spiel bei.")
+    parser.add_argument('-n', '--newround', action='store_true', help='Startet eine neue Spielrunde als Host')
+    parser.add_argument('-j', '--join', help='Tritt einer bestehenden Spielrunde bei')
+
     parser.add_argument('woerter_pfad', nargs='?', help='Wörter Pfad')
     parser.add_argument('xachse', nargs='?', help='X-Achse', type=int)
     parser.add_argument('yachse', nargs='?', help='Y-Achse', type=int)
@@ -432,21 +439,22 @@ if __name__ == "__main__":
     parser.add_argument('max_spieler', nargs='?', help='Maximale Anzahl an Spielern', type=int)
 
     args = parser.parse_args()
-    #Ich habe nargs='?' hinzugefügt,damit die Argumente optional sind.
-    #Wenn ein Argument nicht angegeben wird, wird sein Wert als None gesetzt
-    #und wird in der Main dann schoener ueberprueft
 
-    if '--newround' in sys.argv:
-        args = parse_host_args()
-        if args.newround:
-            print("Neues Spiel wird gestartet.. .")
-            set_game_status(True)
-            main_host(args)
-    elif '--join_into_round' in sys.argv:
+    if args.newround:
+        clear_json_logs()
+        if not all([args.woerter_pfad, args.xachse, args.yachse, args.personal_name, args.max_spieler]):
+            parser.error("Alle Parameter müssen für die Initiierung eines neuen Spiels angegeben werden.")
+        print("Neues Spiel wird gestartet...")
+        set_game_status(True)
+        main_host(args)
+    elif args.join:
         if check_game_status():
-            args = parse_player_args()
-            main_player(args)
+            print(f"{args.join} tritt dem Spiel bei...")
+            main_player(args.join)
         else:
             print("Kein aktives Spiel gefunden. Bitte warten Sie, bis ein Host ein Spiel startet.")
-        #python3 code.py -n woerter_datei 3 3 khaled 2
-
+    else:
+        print(
+            "Bitte geben Sie einen gültigen Befehl ein. Benutzen Sie -n um ein Spiel zu starten oder -j um einem Spiel beizutreten.")
+# python3 code.py -n woerter_datei 3 3 khaled 2
+# python3 code.py -j Paul

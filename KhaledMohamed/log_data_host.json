@@ -1,77 +1,48 @@
 [
     {
-        "host_name": "Rajan",
+        "host_name": "khaled",
         "Event": "Spiel gestartet",
-        "max_spieler": 2,
-        "timestamp": "20-06-2024 14:24:22 Uhr"
+        "max_spieler": 3,
+        "timestamp": "20-06-2024 17:48:35 Uhr"
     },
     {
-        "host_name": "Rajan",
+        "host_name": "khaled",
         "JOKER": "X",
         "x_wert": 1,
         "y_wert": 1,
-        "auswahl_zeitpunkt": "20-06-2024 14:24:22 Uhr"
-    },
-    {
-        "host_name": "Rajan",
-        "button_text": "X",
-        "x_wert": 0,
-        "y_wert": 0,
-        "auswahl_zeitpunkt": "20-06-2024 14:24:48 Uhr"
-    },
-    {
-        "host_name": "Rajan",
-        "button_text": "X",
-        "x_wert": 0,
-        "y_wert": 1,
-        "auswahl_zeitpunkt": "20-06-2024 14:24:49 Uhr"
-    },
-    {
-        "host_name": "Rajan",
-        "button_text": "X",
-        "x_wert": 0,
-        "y_wert": 2,
-        "auswahl_zeitpunkt": "20-06-2024 14:24:49 Uhr"
-    },
-    {
-        "host_name": "Rajan",
-        "Event": "GEWONNEN",
-        "timestamp": "20-06-2024 14:24:49 Uhr"
-    },
-    {
-        "host_name": "khaled",
-        "button_text": "X",
-        "x_wert": 0,
-        "y_wert": 0,
-        "auswahl_zeitpunkt": "20-06-2024 14:24:52 Uhr"
-    },
-    {
-        "host_name": "khaled",
-        "Event": "GEWONNEN",
-        "timestamp": "20-06-2024 14:24:52 Uhr"
+        "auswahl_zeitpunkt": "20-06-2024 17:48:35 Uhr"
     },
     {
         "host_name": "khaled",
         "button_text": "X",
         "x_wert": 0,
         "y_wert": 2,
-        "auswahl_zeitpunkt": "20-06-2024 14:24:52 Uhr"
-    },
-    {
-        "host_name": "khaled",
-        "Event": "GEWONNEN",
-        "timestamp": "20-06-2024 14:24:52 Uhr"
+        "auswahl_zeitpunkt": "20-06-2024 17:48:36 Uhr"
     },
     {
         "host_name": "khaled",
         "button_text": "X",
-        "x_wert": 0,
-        "y_wert": 1,
-        "auswahl_zeitpunkt": "20-06-2024 14:24:55 Uhr"
+        "x_wert": 1,
+        "y_wert": 2,
+        "auswahl_zeitpunkt": "20-06-2024 17:48:37 Uhr"
+    },
+    {
+        "host_name": "khaled",
+        "button_text": "X",
+        "x_wert": 2,
+        "y_wert": 2,
+        "auswahl_zeitpunkt": "20-06-2024 17:48:38 Uhr"
+    },
+    {
+        "host_name": "khaled",
+        "button_text": "X",
+        "x_wert": 2,
+        "y_wert": 0,
+        "auswahl_zeitpunkt": "20-06-2024 17:48:40 Uhr"
     },
     {
         "host_name": "khaled",
         "Event": "GEWONNEN",
-        "timestamp": "20-06-2024 14:24:55 Uhr"
+        "timestamp": "20-06-2024 17:48:40 Uhr"
     }
 ]
