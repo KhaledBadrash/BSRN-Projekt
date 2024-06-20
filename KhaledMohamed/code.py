@@ -20,7 +20,7 @@ def parse_host_args():
 def parse_player_args():
     parser = ArgumentParser(description="Trete einer existierenden Spielrunde bei")
     parser.add_argument('-j', '--join_into_round', action='store_true', help="Tritt einer Runde bei")
-    parser.add_argument('player_name', nargs='?', help='Dein Name')
+    parser.add_argument('personal_name', nargs='?', help='Dein Name')
     return parser.parse_args()
 
 def check_game_status():
@@ -83,7 +83,7 @@ def write_json_log_spieler(data):
         json.dump(data, file, indent=4)  # Fügt Einrückungen hinzu, um die Lesbarkeit zu verbessern
 
 
-def log_spieler_data(player_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
+def log_spieler_data(personal_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
     if isinstance(button_text, ttk.TTkString):
         button_text = str(button_text)
     elif not isinstance(button_text, str):
@@ -91,7 +91,7 @@ def log_spieler_data(player_name, button_text, x_wert, y_wert, auswahl_zeitpunkt
 
     logs = read_json_log_spieler()
     logs.append({
-        'player_name': player_name,
+        'player_name': personal_name,
         'button_text': button_text,
         'x_wert': x_wert,
         'y_wert': y_wert,
@@ -113,10 +113,10 @@ def clear_json_logs():
     with open('log_data_spieler.json', 'w') as file:
         json.dump([], file, indent=4)
 
-def log_spieler_win(player_name):
+def log_spieler_win(personal_name):
     logs = read_json_log_spieler()
     win_data = {
-        'player_name': player_name,
+        'player_name': personal_name,
         'Event': "GEWONNEN",
         'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
     }
@@ -141,7 +141,7 @@ def log_joker(host_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
     })
     write_json_log(logs)
 
-def log_joker_spieler(player_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
+def log_joker_spieler(personal_name, button_text, x_wert, y_wert, auswahl_zeitpunkt):
     # Stelle sicher, dass button_text ein String ist
     if isinstance(button_text, ttk.TTkString):
         button_text = str(button_text)
@@ -150,7 +150,7 @@ def log_joker_spieler(player_name, button_text, x_wert, y_wert, auswahl_zeitpunk
 
     logs = read_json_log()
     logs.append({
-        'player_name': player_name,
+        'player_name': personal_name,
         'JOKER': button_text,
         'x_wert': x_wert,
         'y_wert': y_wert,
@@ -206,22 +206,26 @@ def gewinner_screen(parent, personal_name):
 
 
 def main_player(args):
-    log_game_start(args.player_name, args.max_spieler)  # Korrigierter Funktionsaufruf
+    log_game_start(args.personal_name, args.max_spieler)  # Korrigierter Funktionsaufruf
     # Überprüfung, ob die Werte für X- und Y-Achse identisch sind
-    if check_game_status():
-        print(f"{args.player_name} tritt dem Spiel bei...")
-    else:
+    if not args.join:
+        print("Fehler: Es wurde kein Spielername angegeben.")
+        return
+    if not check_game_status():
         print("Kein aktives Spiel gefunden. Bitte warten Sie, bis ein Host ein Spiel startet.")
+        return
+    print(f"{args.join} tritt dem Spiel bei...")
+
+    if args.join:
+        print(f"{args.join} ist dem Spiel beigetreten")
+    else:
+        print("Fehler: Es wurde kein Spielername angegeben.")
 
     if args.xachse != args.yachse:
         print("Fehler: Die Werte für X- und Y-Achse müssen identisch sein,\num ein Spielfeld generieren zu koennen")
         return
 
     # Überprüfung, ob ein persönlicher Name angegeben wurde
-    if not args.player_name:
-        print("Fehler: Es wurde kein Spielername angegeben.")
-        return
-
 
     grid_layout = ttk.TTkGridLayout(columnMinHeight=0, columnMinWidth=0)
     root = ttk.TTk(layout=grid_layout)
@@ -274,10 +278,10 @@ def main_player(args):
                     write_json_log_spieler(logs)
             else:
                 button.setText("X")
-                log_spieler_data(args.player_name, str(original_text), x, y,
+                log_spieler_data(args.personal_name, str(original_text), x, y,
                               datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
                 logs.append({
-                    'host_name': args.player_name,
+                    'host_name': args.personal_name,
                     'button_text': 'X',
                     'x_wert': x,
                     'y_wert': y,
@@ -286,7 +290,7 @@ def main_player(args):
                 write_json_log_spieler(logs)
 
                 if pruefe_bingo(groesse_feld, logs):  # Check if Bingo condition is met
-                    gewinner_screen(root, args.player_name)
+                    gewinner_screen(root, args.personal_name)
 
         return auf_knopfdruck
 
@@ -299,7 +303,7 @@ def main_player(args):
                 original_texts[button] = button.text()
                 grid_layout.addWidget(button, i, j)
                 button.clicked.connect(klicker(button, original_texts[button], i, j))
-                log_joker_spieler(args.player_name, "X", i, j,
+                log_joker_spieler(args.personal_name, "X", i, j,
                               datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))# Logge den Joker
 
             else:
@@ -426,36 +430,37 @@ def main_host(args):
 
     root.update()
     root.mainloop()
-
-
-if __name__ == "__main__":
+def main():
     parser = ArgumentParser(description="Startet das Spiel als Host oder tritt einem bestehenden Spiel bei.")
     parser.add_argument('-n', '--newround', action='store_true', help='Startet eine neue Spielrunde als Host')
-    parser.add_argument('-j', '--join', help='Tritt einer bestehenden Spielrunde bei')
-
+    parser.add_argument('-j', '--join', help='Name des Spielers, der dem Spiel beitritt')
     parser.add_argument('woerter_pfad', nargs='?', help='Wörter Pfad')
-    parser.add_argument('xachse', nargs='?', help='X-Achse', type=int)
-    parser.add_argument('yachse', nargs='?', help='Y-Achse', type=int)
+    parser.add_argument('xachse', type=int, nargs='?', help='X-Achse')
+    parser.add_argument('yachse', type=int, nargs='?', help='Y-Achse')
     parser.add_argument('personal_name', nargs='?', help='Persönlicher Name')
-    parser.add_argument('max_spieler', nargs='?', help='Maximale Anzahl an Spielern', type=int)
+    parser.add_argument('max_spieler', type=int, nargs='?', help='Maximale Anzahl an Spielern')
 
     args = parser.parse_args()
 
     if args.newround:
-        clear_json_logs()
         if not all([args.woerter_pfad, args.xachse, args.yachse, args.personal_name, args.max_spieler]):
             parser.error("Alle Parameter müssen für die Initiierung eines neuen Spiels angegeben werden.")
-        print("Neues Spiel wird gestartet...")
+        clear_json_logs()
         set_game_status(True)
         main_host(args)
     elif args.join:
         if check_game_status():
-            print(f"{args.join} tritt dem Spiel bei...")
-            main_player(args.join)
+            main_player(args)
         else:
             print("Kein aktives Spiel gefunden. Bitte warten Sie, bis ein Host ein Spiel startet.")
     else:
         print(
             "Bitte geben Sie einen gültigen Befehl ein. Benutzen Sie -n um ein Spiel zu starten oder -j um einem Spiel beizutreten.")
+
+
+if __name__ == "__main__":
+    main()
+
+
 # python3 code.py -n woerter_datei 3 3 khaled 2
 # python3 code.py -j Paul
