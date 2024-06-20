@@ -144,28 +144,29 @@ def main(args):
         return
 
     def pruefe_bingo(max_feld, logs):
-        # Extract positions of all "X" marks from the logs
-        marked_positions = [(log.get('x_wert'), log.get('y_wert')) for log in logs if log.get('button_text') == 'X' or
-                            log.get('JOKER') == 'X']
 
-        # Check horizontal lines
+        marked_positions = [(log.get('x_wert'), log.get('y_wert')) for log in logs
+                            if log.get('button_text') == 'X' or log.get('JOKER') == 'X']
+
+        # Überprüft horizontale Linien
         for i in range(max_feld):
-            # Check horizontal lines
             if all((i, j) in marked_positions for j in range(max_feld)):
                 return True
 
-            # Check vertical lines
-            if all((j, i) in marked_positions for j in range(max_feld)):
-                return True
-            # Check diagonal lines (top-left to bottom-right)
-            if all((j, j) in marked_positions for j in range(max_feld)):
+        # Überprüft vertikale Linien
+        for j in range(max_feld):
+            if all((i, j) in marked_positions for i in range(max_feld)):
                 return True
 
-            # Check diagonal lines (top-right to bottom-left)
-            if all((j, max_feld - 1 - j) in marked_positions for j in range(max_feld)):
-                return True
+        # Überprüft diagonale Linien (von links oben nach rechts unten)
+        if all((i, i) in marked_positions for i in range(max_feld)):
+            return True
 
-            return False
+        # Überprüft diagonale Linien (von rechts oben nach links unten)
+        if all((i, max_feld - 1 - i) in marked_positions for i in range(max_feld)):
+            return True
+
+        return False
 
 
     def klicker(button, original_text, x, y):
