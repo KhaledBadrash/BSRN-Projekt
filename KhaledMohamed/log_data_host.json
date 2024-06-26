@@ -1,15 +1,8 @@
 [
     {
-        "host_name": "khaled",
+        "host_name": "HostName",
         "Event": "Spiel gestartet",
-        "max_spieler": 2,
-        "timestamp": "24-06-2024 21:08:16 Uhr"
-    },
-    {
-        "host_name": "khaled",
-        "JOKER": "X",
-        "x_wert": 1,
-        "y_wert": 1,
-        "auswahl_zeitpunkt": "24-06-2024 21:08:16 Uhr"
+        "max_spieler": 3,
+        "timestamp": "26-06-2024 23:35:25 Uhr"
     }
 ]

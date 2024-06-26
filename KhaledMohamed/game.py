@@ -1,5 +1,7 @@
 import os
 import random
+from multiprocessing import Process, Pipe
+
 from argparse import ArgumentParser, Namespace
 import TermTk as ttk
 import json
@@ -8,7 +10,7 @@ from datetime import datetime
 
 def parse_args():
     parser = ArgumentParser(description="Starte eine neue Spielrunde oder trete einer bestehenden Runde bei")
-    subparsers = parser.add_subparsers(dest='command')
+    subparsers = parser.add_subparsers(dest='command', required=True)
 
     # Subparser für das Starten einer neuen Runde als Host
     host_parser = subparsers.add_parser('host', help='Starte eine neue Runde als Host')
@@ -21,7 +23,6 @@ def parse_args():
 
     # Subparser für das Beitreten einer bestehenden Runde als Spieler
     player_parser = subparsers.add_parser('join', help='Tritt einer bestehenden Runde bei')
-    player_parser.add_argument('-j', '--join_into_round', action='store_true', help="Tritt einer Runde bei")
     player_parser.add_argument('personal_name', help='Dein Name')
 
     return parser.parse_args()
@@ -253,19 +254,18 @@ def game():
             clear_json_log()  # Leere die JSON-Datei
             main(args)
         else:
-            # Elternprozess kann andere Aufgaben übernehmen oder auf beitretende Spieler warten
-            os.waitpid(pid, 0)  # Warte auf das Ende des Host-Prozesses
-    elif args.command == 'join' and args.join_into_round:
+            # Elternprozess tut nichts, der Host-Prozess läuft nun eigenständig
+            print(f"Host-Prozess gestartet mit PID {pid}.")
+    elif args.command == 'join':
         pid = os.fork()
         if pid == 0:
             # Kindprozess für einen beitretenden Spieler
-            # Hier können Sie den Code für den beitretenden Spieler hinzufügen
             print(f"Spieler {args.personal_name} tritt der Runde bei.")
-            # Simulieren Sie hier das Beitreten des Spiels
-            os._exit(0)  # Beenden Sie den Kinderprozess, wenn fertig
+            # Hier kann der Code zum Beitreten des Spiels hinzugefügt werden
+            os._exit(0)  # Beenden Sie den Kindprozess, wenn fertig
         else:
-            # Elternprozess kann weiterhin andere Aufgaben übernehmen
-            os.waitpid(pid, 0)  # Warte auf das Ende des Spielerprozesses
+            # Elternprozess tut nichts, der Spieler-Prozess läuft nun eigenständig
+            print(f"Spieler-Prozess gestartet mit PID {pid}.")
     else:
         print("Kein gültiges Argument zum Starten oder Beitreten einer Runde angegeben.")
 
@@ -274,5 +274,6 @@ if __name__ == "__main__":
 
 
         #python3 bingo.py -n woerter_datei 3 3 khaled 2
-        #python3 bingo.py -j SpielerName
+        #python3 bingo.py join SpielerName
+
 
