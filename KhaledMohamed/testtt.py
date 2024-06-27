@@ -1,12 +1,10 @@
 import os
 import random
 from argparse import ArgumentParser, Namespace
+import TermTk as ttk
 import json
 from datetime import datetime
 import sys
-from textual.app import App, ComposeResult
-from textual.containers import Grid
-from textual.widgets import Button, Static
 
 
 def parse_args():
@@ -43,16 +41,8 @@ def lade_woerter(woerter_pfad, xachse, yachse):
 
 
 def setup_pipes(max_players):
-    host_to_players_path = '/tmp/host_to_players'
-    players_to_host_path = '/tmp/players_to_host'
-
-    if os.path.exists(host_to_players_path):
-        os.remove(host_to_players_path)
-    if os.path.exists(players_to_host_path):
-        os.remove(players_to_host_path)
-
-    os.mkfifo(host_to_players_path, mode=0o666)
-    os.mkfifo(players_to_host_path, mode=0o666)
+    os.mkfifo('/tmp/host_to_players', mode=0o666)
+    os.mkfifo('/tmp/players_to_host', mode=0o666)
 
 
 def cleanup_pipes():
@@ -133,51 +123,41 @@ def log_win(host_name):
     write_json_log(logs)
 
 
-class GameApp(App):
-
-    def __init__(self, args):
-        super().__init__()
-        self.args = args
-        self.woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
-
-    def compose(self) -> ComposeResult:
-        grid = Grid()
-
-        # Add rows and columns based on the game dimensions
-        grid.styles.grid_template_rows = " ".join(["1fr"] * self.args.xachse)
-        grid.styles.grid_template_columns = " ".join(["1fr"] * self.args.yachse)
-
-        yield grid
-
-    async def on_mount(self) -> None:
-        grid = self.query_one(Grid)
-        for i in range(self.args.xachse):
-            for j in range(self.args.yachse):
-                wort = self.woerter[i * self.args.yachse + j]  # corrected the indexing issue
-                button = Button(label=wort, id=f"btn_{i}_{j}")
-                button.on_click = self.button_click
-                await grid.mount(button)
-
-    def button_click(self, button: Button):
-        button.label = "X"
-        _, x, y = button.id.split('_')
-        x, y = int(x), int(y)
-        log_data = {
-            'host_name': self.args.personal_name,
-            'button_text': 'X',
-            'x_wert': x,
-            'y_wert': y,
-            'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
-        }
-        logs = read_json_log()
-        logs.append(log_data)
-        write_json_log(logs)
-
-
 def main(args):
     log_game_start(args.personal_name, args.max_spieler)
-    app = GameApp(args)
-    app.run()
+    # GUI Setup
+    root = ttk.TTk()
+    grid_layout = ttk.TTkGridLayout(parent=root)
+    root.setLayout(grid_layout)
+
+    # Spielbrett einrichten
+    woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
+    buttons = []
+    for i in range(args.xachse):
+        for j in range(args.yachse):
+            wort = woerter[i * args.xachse + j]
+            button = ttk.TTkButton(text=wort, pos=(i, j))
+            button.clicked.connect(lambda btn=button, x=i, y=j: button_click(btn, args.personal_name, x, y))
+            grid_layout.addWidget(button, i, j)
+            buttons.append(button)
+
+    # GUI starten
+    root.mainloop()
+
+
+def button_click(button, host_name, x, y):
+    # Logik für das Klicken der Schaltflächen
+    button.setText("X")
+    log_data = {
+        'host_name': host_name,
+        'button_text': 'X',
+        'x_wert': x,
+        'y_wert': y,
+        'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
+    }
+    logs = read_json_log()
+    logs.append(log_data)
+    write_json_log(logs)
 
 
 def game():
@@ -202,9 +182,7 @@ def game():
 if __name__ == "__main__":
     game()
 
-
-#python3 multi.py host -n woerter_datei 5 5 HostName 2
-
+#python3 multi.py host -n woerter_datei 5 5 HostName 3
 
 #python3 multi.py join SpielerName1
 #python3 multi.py join SpielerName2
