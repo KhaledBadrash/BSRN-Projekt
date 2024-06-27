@@ -173,49 +173,52 @@ class GameApp:
         self.player_name = player_name or args.personal_name
         self.woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
         self.root = ttk.TTk()
+        self.original_texts = {}
 
     def run(self):
         grid_layout = ttk.TTkGridLayout(parent=self.root)
         self.root.setLayout(grid_layout)
 
-        buttons = []
         for i in range(self.args.xachse):
             for j in range(self.args.yachse):
-                if i == self.args.xachse / 2 - 0.5 and j == self.args.yachse / 2 - 0.5:
+                if i == self.args.xachse // 2 and j == self.args.yachse // 2:
                     button = ttk.TTkButton(parent=self.root, text='X', border=True, pos=(i, j))
+                    self.original_texts[button] = button.text()
                     button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
                     grid_layout.addWidget(button, i, j)
-                    buttons.append(button)
-                    log_data = {
-                        'host_name': self.player_name,
-                        'button_text': 'X',
-                        'x_wert': self.args.xachse / 2 - 0.5,
-                        'y_wert': self.args.xachse / 2 - 0.5,
-                        'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
-                    }
-                    logs = read_json_log()
-                    logs.append(log_data)
-                    write_json_log(logs)
+                    self.log_joker('X', i, j, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
                 else:
                     wort = self.woerter[i * self.args.yachse + j]
                     button = ttk.TTkButton(parent=self.root, text=wort, border=True, pos=(i, j))
+                    self.original_texts[button] = button.text()
                     button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
                     grid_layout.addWidget(button, i, j)
-                    buttons.append(button)
 
         self.root.mainloop()
 
-    def button_click(self, button, x, y):
-        if button.text != 'X':
+    def button_click(self, button, x_wert, y_wert):
+        logs = read_json_log()
+        if button.text() == "X":
+            # Find the log entry corresponding to the button being reverted
+            log_index = next(
+                (index for (index, d) in enumerate(logs) if d.get("x_wert") == x_wert and d.get("y_wert") == y_wert),
+                None)
+            if log_index is not None and log_index == len(logs) - 1:
+                logs.pop(log_index)  # Remove the log entry
+                button.setText(self.original_texts[button])  # Set button text to original text
+                write_json_log(logs)
+        else:
+            original_text = button.text()
             button.setText("X")
+            auswahl_zeitpunkt = datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
+            self.log_data_json(original_text, x_wert, y_wert, auswahl_zeitpunkt)
             log_data = {
                 'host_name': self.player_name,
                 'button_text': 'X',
-                'x_wert': x,
-                'y_wert': y,
-                'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
+                'x_wert': x_wert,
+                'y_wert': y_wert,
+                'auswahl_zeitpunkt': auswahl_zeitpunkt
             }
-            logs = read_json_log()
             logs.append(log_data)
             write_json_log(logs)
 
@@ -224,15 +227,46 @@ class GameApp:
             print(f"Bingo! {self.player_name} hat gewonnen!")
             gewinner_button(self.root, self.player_name)
 
+    def log_joker(self, button_text, x_wert, y_wert, auswahl_zeitpunkt):
+        if isinstance(button_text, ttk.TTkString):
+            button_text = str(button_text)
+        elif not isinstance(button_text, str):
+            button_text = repr(button_text)
+
+        logs = read_json_log()
+        logs.append({
+            'host_name': self.player_name,
+            'JOKER': button_text,
+            'x_wert': x_wert,
+            'y_wert': y_wert,
+            'auswahl_zeitpunkt': auswahl_zeitpunkt
+        })
+        write_json_log(logs)
+
+    def log_data_json(self, button_text, x_wert, y_wert, auswahl_zeitpunkt):
+        if isinstance(button_text, ttk.TTkString):
+            button_text = str(button_text)
+        elif not isinstance(button_text, str):
+            button_text = repr(button_text)
+
+        logs = read_json_log()
+        logs.append({
+            'host_name': self.player_name,
+            'button_text': button_text,
+            'x_wert': x_wert,
+            'y_wert': y_wert,
+            'auswahl_zeitpunkt': auswahl_zeitpunkt
+        })
+        write_json_log(logs)
+
 
 def run_game_gui(player_name, xachse, yachse):
-    # Dummy arguments for initializing the GUI for the player
     args = Namespace(
         woerter_pfad='woerter_datei',
         xachse=xachse,
         yachse=yachse,
         personal_name=player_name,
-        max_spieler=3  # This value isn't used in the player's GUI
+        max_spieler=3
     )
     app = GameApp(args, player_name)
     app.run()

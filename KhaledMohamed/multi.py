@@ -160,12 +160,10 @@ def pruefe_bingo(max_feld, logs):
     return False
 
 
-def gewinner_screen(parent, personal_name):
-    win_root = ttk.TTkWindow(parent=parent, title="Gewinner", border=True, pos=(35, 5), size=(30, 10))
-    ttk.TTkLabel(win_root, text="Gewinner! Herzlichen Glückwunsch!", pos=(2, 2))
-    win_root.raiseWidget()
+def gewinner_button(parent, personal_name):
+    win_button = ttk.TTkButton(parent=parent, text="Gewinner! Herzlichen Glückwunsch!", pos=(10, 5), size=(30, 3))
     log_win(personal_name)  # Loggen des Gewinnereignisses
-    win_root.show()
+    win_button.show()
 
 
 class GameApp:
@@ -183,41 +181,57 @@ class GameApp:
         buttons = []
         for i in range(self.args.xachse):
             for j in range(self.args.yachse):
-                wort = self.woerter[i * self.args.yachse + j]
-                button = ttk.TTkButton(text=wort, pos=(i, j))
-                button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
-                grid_layout.addWidget(button, i, j)
-                buttons.append(button)
+                if i == self.args.xachse / 2 - 0.5 and j == self.args.yachse / 2 - 0.5:
+                    button = ttk.TTkButton(parent=self.root, text='X', border=True, pos=(i, j))
+                    button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
+                    grid_layout.addWidget(button, i, j)
+                    buttons.append(button)
+                    log_data = {
+                        'host_name': self.player_name,
+                        'button_text': 'X',
+                        'x_wert': self.args.xachse / 2 - 0.5,
+                        'y_wert': self.args.xachse / 2 - 0.5,
+                        'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
+                    }
+                    logs = read_json_log()
+                    logs.append(log_data)
+                    write_json_log(logs)
+                else:
+                    wort = self.woerter[i * self.args.yachse + j]
+                    button = ttk.TTkButton(parent=self.root, text=wort, border=True, pos=(i, j))
+                    button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
+                    grid_layout.addWidget(button, i, j)
+                    buttons.append(button)
 
         self.root.mainloop()
 
     def button_click(self, button, x, y):
-        button.setText("X")
-        log_data = {
-            'host_name': self.player_name,
-            'button_text': 'X',
-            'x_wert': x,
-            'y_wert': y,
-            'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
-        }
-        logs = read_json_log()
-        logs.append(log_data)
-        write_json_log(logs)
+        if button.text != 'X':
+            button.setText("X")
+            log_data = {
+                'host_name': self.player_name,
+                'button_text': 'X',
+                'x_wert': x,
+                'y_wert': y,
+                'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
+            }
+            logs = read_json_log()
+            logs.append(log_data)
+            write_json_log(logs)
 
         # Check for bingo
         if pruefe_bingo(self.args.xachse, logs):
             print(f"Bingo! {self.player_name} hat gewonnen!")
-            gewinner_screen(self.root, self.player_name)
+            gewinner_button(self.root, self.player_name)
 
 
 def run_game_gui(player_name, xachse, yachse):
-    # Dummy arguments for initializing the GUI for the player
     args = Namespace(
         woerter_pfad='woerter_datei',
         xachse=xachse,
         yachse=yachse,
         personal_name=player_name,
-        max_spieler=3  # This value isn't used in the player's GUI
+        max_spieler=3
     )
     app = GameApp(args, player_name)
     app.run()
@@ -260,4 +274,4 @@ if __name__ == "__main__":
 
 #pstree -p | grep python3
 #cd KhaledMohamed
-# python3 multi.py host -n woerter_datei 3 3 khaled 3
+# python3 testtt.py host -n woerter_datei 5 5 khaled 1
