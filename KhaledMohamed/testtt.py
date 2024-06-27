@@ -182,26 +182,44 @@ class GameApp:
         buttons = []
         for i in range(self.args.xachse):
             for j in range(self.args.yachse):
-                wort = self.woerter[i * self.args.yachse + j]
-                button = ttk.TTkButton(text=wort, pos=(i, j))
-                button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
-                grid_layout.addWidget(button, i, j)
-                buttons.append(button)
+                if i == self.args.xachse/2 - 0.5 and j == self.args.yachse/2 - 0.5:
+                    wort = self.woerter[i * self.args.yachse + j]
+                    button = ttk.TTkButton(text='X', pos=(i, j))
+                    button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
+                    grid_layout.addWidget(button, i, j)
+                    buttons.append(button)
+                    log_data = {
+                        'host_name': self.player_name,
+                        'button_text': 'X',
+                        'x_wert': self.args.xachse/2 - 0.5,
+                        'y_wert': self.args.xachse/2 - 0.5,
+                        'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
+                    }
+                    logs = read_json_log()
+                    logs.append(log_data)
+                    write_json_log(logs)
+                else:
+                    wort = self.woerter[i * self.args.yachse + j]
+                    button = ttk.TTkButton(text=wort, pos=(i, j))
+                    button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
+                    grid_layout.addWidget(button, i, j)
+                    buttons.append(button)
 
         self.root.mainloop()
 
     def button_click(self, button, x, y):
-        button.setText("X")
-        log_data = {
-            'host_name': self.player_name,
-            'button_text': 'X',
-            'x_wert': x,
-            'y_wert': y,
-            'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
-        }
-        logs = read_json_log()
-        logs.append(log_data)
-        write_json_log(logs)
+        if button.text != 'X':
+            button.setText("X")
+            log_data = {
+                'host_name': self.player_name,
+                'button_text': 'X',
+                'x_wert': x,
+                'y_wert': y,
+                'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
+            }
+            logs = read_json_log()
+            logs.append(log_data)
+            write_json_log(logs)
 
         # Check for bingo
         if pruefe_bingo(self.args.xachse, logs):
