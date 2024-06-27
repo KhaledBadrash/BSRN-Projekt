@@ -160,10 +160,15 @@ def pruefe_bingo(max_feld, logs):
     return False
 
 
-def gewinner_button(parent, personal_name):
-    win_button = ttk.TTkButton(parent=parent, text="Gewinner! Herzlichen Glückwunsch!", pos=(10, 5), size=(30, 3))
+def gewinner_screen(parent, personal_name):
+    win_root = ttk.TTkWindow(parent=parent, title="Gewinner", border=True, pos=(35, 5), size=(30, 10))
+    win_root.raiseWidget()
     log_win(personal_name)  # Loggen des Gewinnereignisses
-    win_button.show()
+    win_root.show()
+    name_root = ttk.TTkWindow(parent=parent, title=f"{personal_name} ist der Gewinner!", border=True, pos=(35, 20),
+                              size=(30, 10))
+    name_root.raiseWidget()
+    name_root.show()
 
 
 class GameApp:
@@ -224,8 +229,7 @@ class GameApp:
 
         # Check for bingo
         if pruefe_bingo(self.args.xachse, logs):
-            print(f"Bingo! {self.player_name} hat gewonnen!")
-            gewinner_button(self.root, self.player_name)
+            gewinner_screen(self.root, self.player_name)
 
     def log_joker(self, button_text, x_wert, y_wert, auswahl_zeitpunkt):
         if isinstance(button_text, ttk.TTkString):
@@ -261,6 +265,7 @@ class GameApp:
 
 
 def run_game_gui(player_name, xachse, yachse):
+
     args = Namespace(
         woerter_pfad='woerter_datei',
         xachse=xachse,
@@ -300,13 +305,8 @@ def game():
 if __name__ == "__main__":
     game()
 
-#python3 multi.py host -n woerter_datei 5 5 HostName 3
-
-#python3 multi.py join SpielerName1
-#python3 multi.py join SpielerName2
-#python3 multi.py join SpielerName3
-
-
-#pstree -p | grep python3
-#cd KhaledMohamed
-# python3 testtt.py host -n woerter_datei 5 5 khaled 1
+# Usage examples:
+# python3 multi.py host -n woerter_datei 5 5 HostName 3
+# python3 multi.py join SpielerName1
+# python3 multi.py join SpielerName2
+# python3 multi.py join SpielerName3
