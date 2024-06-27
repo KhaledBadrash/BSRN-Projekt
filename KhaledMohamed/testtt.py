@@ -71,7 +71,7 @@ def handle_host_connections(args, conn):
                 print(f"Spieler {connected_players} verbunden.")
 
         print("Alle Spieler sind verbunden. Das Spiel beginnt!")
-        h2p.write('START\n')
+        h2p.write(f'START {args.xachse} {args.yachse}\n')
         h2p.flush()
         conn.send(True)
     cleanup_pipes()
@@ -84,9 +84,12 @@ def player_process(player_name):
         p2h.flush()
 
         start_message = h2p.readline().strip()
-        if start_message == 'START':
+        if start_message.startswith('START'):
+            _, xachse, yachse = start_message.split()
+            xachse = int(xachse)
+            yachse = int(yachse)
             print(f"Spiel beginnt für {player_name}!")
-            run_game_gui(player_name)
+            run_game_gui(player_name, xachse, yachse)
 
 
 def read_json_log():
@@ -129,7 +132,39 @@ def log_win(host_name):
         'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
     }
     logs.append(win_data)
-    write_json_log(win_data)
+    write_json_log(logs)
+
+
+def pruefe_bingo(max_feld, logs):
+    marked_positions = [(log.get('x_wert'), log.get('y_wert')) for log in logs
+                        if log.get('button_text') == 'X' or log.get('JOKER') == 'X']
+
+    # Überprüft horizontale Linien
+    for i in range(max_feld):
+        if all((i, j) in marked_positions for j in range(max_feld)):
+            return True
+
+    # Überprüft vertikale Linien
+    for j in range(max_feld):
+        if all((i, j) in marked_positions for i in range(max_feld)):
+            return True
+
+    # Überprüft diagonale Linien (von links oben nach rechts unten)
+    if all((i, i) in marked_positions for i in range(max_feld)):
+        return True
+
+    # Überprüft diagonale Linien (von rechts oben nach links unten)
+    if all((i, max_feld - 1 - i) in marked_positions for i in range(max_feld)):
+        return True
+
+    return False
+
+
+def gewinner_button(parent, personal_name):
+    win_button = ttk.TTkButton(parent=parent, text="Gewinner! Herzlichen Glückwunsch!", pos=(10, 5), size=(30, 3))
+    log_win(personal_name)  # Loggen des Gewinnereignisses
+    win_button.show()
+
 
 
 class GameApp:
@@ -138,11 +173,11 @@ class GameApp:
         self.args = args
         self.player_name = player_name or args.personal_name
         self.woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
+        self.root = ttk.TTk()
 
     def run(self):
-        root = ttk.TTk()
-        grid_layout = ttk.TTkGridLayout(parent=root)
-        root.setLayout(grid_layout)
+        grid_layout = ttk.TTkGridLayout(parent=self.root)
+        self.root.setLayout(grid_layout)
 
         buttons = []
         for i in range(self.args.xachse):
@@ -153,7 +188,7 @@ class GameApp:
                 grid_layout.addWidget(button, i, j)
                 buttons.append(button)
 
-        root.mainloop()
+        self.root.mainloop()
 
     def button_click(self, button, x, y):
         button.setText("X")
@@ -168,15 +203,20 @@ class GameApp:
         logs.append(log_data)
         write_json_log(logs)
 
+        # Check for bingo
+        if pruefe_bingo(self.args.xachse, logs):
+            print(f"Bingo! {self.player_name} hat gewonnen!")
+            gewinner_button(self.root, self.player_name)
 
-def run_game_gui(player_name):
+
+def run_game_gui(player_name, xachse, yachse):
     # Dummy arguments for initializing the GUI for the player
     args = Namespace(
         woerter_pfad='woerter_datei',
-        xachse=5,
-        yachse=5,
+        xachse=xachse,
+        yachse=yachse,
         personal_name=player_name,
-        max_spieler=3
+        max_spieler=3  # This value isn't used in the player's GUI
     )
     app = GameApp(args, player_name)
     app.run()
