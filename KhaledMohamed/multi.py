@@ -5,6 +5,8 @@ import json
 from datetime import datetime
 from multiprocessing import Process, Pipe
 import TermTk as ttk
+import time
+import threading
 import sys
 
 
@@ -60,15 +62,18 @@ def cleanup_pipes():
 
 
 def handle_host_connections(args, conn):
+    anz_spieler = args.max_spieler
+    print(f"Warte auf {anz_spieler} Spieler...")
     setup_pipes()
     with open('/tmp/host_to_players', 'w') as h2p, open('/tmp/players_to_host', 'r') as p2h:
         connected_players = 0
-        print("Warte auf Spieler...")
         while connected_players < args.max_spieler:
             line = p2h.readline().strip()
             if line == 'READY':
                 connected_players += 1
                 print(f"Spieler {connected_players} verbunden.")
+                print(f"Warte auf {anz_spieler-1} Spieler...")
+                anz_spieler = anz_spieler - 1
 
         print("Alle Spieler sind verbunden. Das Spiel beginnt!")
         h2p.write(f'START {args.xachse} {args.yachse}\n')
@@ -165,10 +170,28 @@ def gewinner_screen(parent, personal_name):
     win_root.raiseWidget()
     log_win(personal_name)  # Loggen des Gewinnereignisses
     win_root.show()
-    name_root = ttk.TTkWindow(parent=parent, title=f"{personal_name} ist der Gewinner!", border=True, pos=(35, 20),
-                              size=(30, 10))
+
+    name_root = ttk.TTkWindow(parent=parent, title=f"{personal_name} ist der Gewinner!", border=True, pos=(35, 20), size=(30, 10))
     name_root.raiseWidget()
     name_root.show()
+
+    # Animation: Change the title color repeatedly
+    def animate_title():
+        colors = [ttk.TTkColor.RST, ttk.TTkColor.BOLD, ttk.TTkColor.UNDERLINE, ttk.TTkColor.RED, ttk.TTkColor.GREEN,
+                  ttk.TTkColor.YELLOW, ttk.TTkColor.BLUE, ttk.TTkColor.MAGENTA, ttk.TTkColor.CYAN, ttk.TTkColor.WHITE]
+        index = 0
+        while True:
+            win_root.setTitle(f"{colors[index % len(colors)]}Gewinner")
+            name_root.setTitle(f"{colors[index % len(colors)]}{personal_name} ist der Gewinner!")
+            index += 1
+            time.sleep(0.5)
+            parent.update()
+
+    # Start the animation in a separate thread to keep the GUI responsive
+    import threading
+    animation_thread = threading.Thread(target=animate_title, daemon=True)
+    animation_thread.start()
+
 
 class GameApp:
 
@@ -302,7 +325,6 @@ def game():
 
 if __name__ == "__main__":
     game()
-
 #python3 multi.py host -n woerter_datei 5 5 HostName 3
 
 #python3 multi.py join SpielerName1
