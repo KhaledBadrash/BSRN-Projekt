@@ -3,10 +3,9 @@ import random
 from argparse import ArgumentParser, Namespace
 import json
 from datetime import datetime
+from multiprocessing import Process, Pipe
+import TermTk as ttk
 import sys
-from textual.app import App, ComposeResult
-from textual.containers import Grid
-from textual.widgets import Button, Static
 
 
 def parse_args():
@@ -37,12 +36,12 @@ def lade_woerter(woerter_pfad, xachse, yachse):
             zufaellige_woerter = random.sample(woerter, anz_woerter)
             return zufaellige_woerter
     except FileNotFoundError:
-        return 'Die angegebene Datei konnte nicht gefunden werden'
+        raise FileNotFoundError('Die angegebene Datei konnte nicht gefunden werden')
     except ValueError as e:
-        return str(e)
+        raise ValueError(str(e))
 
 
-def setup_pipes(max_players):
+def setup_pipes():
     host_to_players_path = '/tmp/host_to_players'
     players_to_host_path = '/tmp/players_to_host'
 
@@ -60,8 +59,8 @@ def cleanup_pipes():
     os.unlink('/tmp/players_to_host')
 
 
-def host_process(args):
-    setup_pipes(args.max_spieler)
+def handle_host_connections(args, conn):
+    setup_pipes()
     with open('/tmp/host_to_players', 'w') as h2p, open('/tmp/players_to_host', 'r') as p2h:
         connected_players = 0
         print("Warte auf Spieler...")
@@ -74,7 +73,7 @@ def host_process(args):
         print("Alle Spieler sind verbunden. Das Spiel beginnt!")
         h2p.write('START\n')
         h2p.flush()
-        main(args)
+        conn.send(True)
     cleanup_pipes()
 
 
@@ -87,7 +86,7 @@ def player_process(player_name):
         start_message = h2p.readline().strip()
         if start_message == 'START':
             print(f"Spiel beginnt für {player_name}!")
-            # Hier könnte die Spiellogik des Spielers integriert werden
+            run_game_gui(player_name)
 
 
 def read_json_log():
@@ -130,40 +129,36 @@ def log_win(host_name):
         'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
     }
     logs.append(win_data)
-    write_json_log(logs)
+    write_json_log(win_data)
 
 
-class GameApp(App):
+class GameApp:
 
-    def __init__(self, args):
-        super().__init__()
+    def __init__(self, args, player_name=None):
         self.args = args
+        self.player_name = player_name or args.personal_name
         self.woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
 
-    def compose(self) -> ComposeResult:
-        grid = Grid()
+    def run(self):
+        root = ttk.TTk()
+        grid_layout = ttk.TTkGridLayout(parent=root)
+        root.setLayout(grid_layout)
 
-        # Add rows and columns based on the game dimensions
-        grid.styles.grid_template_rows = " ".join(["1fr"] * self.args.xachse)
-        grid.styles.grid_template_columns = " ".join(["1fr"] * self.args.yachse)
-
-        yield grid
-
-    async def on_mount(self) -> None:
-        grid = self.query_one(Grid)
+        buttons = []
         for i in range(self.args.xachse):
             for j in range(self.args.yachse):
-                wort = self.woerter[i * self.args.yachse + j]  # corrected the indexing issue
-                button = Button(label=wort, id=f"btn_{i}_{j}")
-                button.on_click = self.button_click
-                await grid.mount(button)
+                wort = self.woerter[i * self.args.yachse + j]
+                button = ttk.TTkButton(text=wort, pos=(i, j))
+                button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
+                grid_layout.addWidget(button, i, j)
+                buttons.append(button)
 
-    def button_click(self, button: Button):
-        button.label = "X"
-        _, x, y = button.id.split('_')
-        x, y = int(x), int(y)
+        root.mainloop()
+
+    def button_click(self, button, x, y):
+        button.setText("X")
         log_data = {
-            'host_name': self.args.personal_name,
+            'host_name': self.player_name,
             'button_text': 'X',
             'x_wert': x,
             'y_wert': y,
@@ -174,37 +169,48 @@ class GameApp(App):
         write_json_log(logs)
 
 
-def main(args):
-    log_game_start(args.personal_name, args.max_spieler)
-    app = GameApp(args)
+def run_game_gui(player_name):
+    # Dummy arguments for initializing the GUI for the player
+    args = Namespace(
+        woerter_pfad='woerter_datei',
+        xachse=5,
+        yachse=5,
+        personal_name=player_name,
+        max_spieler=3
+    )
+    app = GameApp(args, player_name)
     app.run()
+
+
+def main(args):
+    if args.command == 'host' and args.newround:
+        clear_json_log()
+        log_game_start(args.personal_name, args.max_spieler)
+
+        parent_conn, child_conn = Pipe()
+        connection_process = Process(target=handle_host_connections, args=(args, child_conn))
+        connection_process.start()
+
+        if parent_conn.recv():
+            app = GameApp(args)
+            app.run()
+
+        connection_process.join()
+    elif args.command == 'join':
+        player_process(args.personal_name)
+    else:
+        print("Kein gültiges Argument zum Starten oder Beitreten einer Runde angegeben.")
 
 
 def game():
     args = parse_args()
-    if args.command == 'host' and args.newround:
-        pid = os.fork()
-        if pid == 0:
-            clear_json_log()
-            host_process(args)
-        else:
-            print(f"Host-Prozess gestartet mit PID {pid}.")
-    elif args.command == 'join':
-        pid = os.fork()
-        if pid == 0:
-            player_process(args.personal_name)
-        else:
-            print(f"Spieler-Prozess gestartet mit PID {pid}.")
-    else:
-        print("Kein gültiges Argument zum Starten oder Beitreten einer Runde angegeben.")
+    main(args)
 
 
 if __name__ == "__main__":
     game()
 
-
-#python3 multi.py host -n woerter_datei 5 5 HostName 2
-
+#python3 multi.py host -n woerter_datei 5 5 HostName 3
 
 #python3 multi.py join SpielerName1
 #python3 multi.py join SpielerName2
