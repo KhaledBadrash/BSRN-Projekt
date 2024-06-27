@@ -166,7 +166,6 @@ def gewinner_button(parent, personal_name):
     win_button.show()
 
 
-
 class GameApp:
 
     def __init__(self, args, player_name=None):
@@ -182,17 +181,16 @@ class GameApp:
         buttons = []
         for i in range(self.args.xachse):
             for j in range(self.args.yachse):
-                if i == self.args.xachse/2 - 0.5 and j == self.args.yachse/2 - 0.5:
-                    wort = self.woerter[i * self.args.yachse + j]
-                    button = ttk.TTkButton(text='X', pos=(i, j))
+                if i == self.args.xachse / 2 - 0.5 and j == self.args.yachse / 2 - 0.5:
+                    button = ttk.TTkButton(parent=self.root, text='X', border=True, pos=(i, j))
                     button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
                     grid_layout.addWidget(button, i, j)
                     buttons.append(button)
                     log_data = {
                         'host_name': self.player_name,
                         'button_text': 'X',
-                        'x_wert': self.args.xachse/2 - 0.5,
-                        'y_wert': self.args.xachse/2 - 0.5,
+                        'x_wert': self.args.xachse / 2 - 0.5,
+                        'y_wert': self.args.xachse / 2 - 0.5,
                         'auswahl_zeitpunkt': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
                     }
                     logs = read_json_log()
@@ -200,7 +198,7 @@ class GameApp:
                     write_json_log(logs)
                 else:
                     wort = self.woerter[i * self.args.yachse + j]
-                    button = ttk.TTkButton(text=wort, pos=(i, j))
+                    button = ttk.TTkButton(parent=self.root, text=wort, border=True, pos=(i, j))
                     button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
                     grid_layout.addWidget(button, i, j)
                     buttons.append(button)
@@ -277,4 +275,4 @@ if __name__ == "__main__":
 
 #pstree -p | grep python3
 #cd KhaledMohamed
-# python3 multi.py host -n woerter_datei 3 3 khaled 3
+# python3 testtt.py host -n woerter_datei 5 5 khaled 1
