@@ -82,21 +82,6 @@ def handle_host_connections(args, conn):
     cleanup_pipes()
 
 
-def player_process(player_name):
-    with open('/tmp/host_to_players', 'r') as h2p, open('/tmp/players_to_host', 'w') as p2h:
-        print(f"Spieler {player_name} ist bereit.")
-        p2h.write('READY\n')
-        p2h.flush()
-
-        start_message = h2p.readline().strip()
-        if start_message.startswith('START'):
-            _, xachse, yachse = start_message.split()
-            xachse = int(xachse)
-            yachse = int(yachse)
-            print(f"Spiel beginnt für {player_name}!")
-            run_game_gui(player_name, xachse, yachse)
-
-
 def read_json_log():
     try:
         with open('log_data_host.json', 'r') as file:
@@ -192,6 +177,30 @@ def gewinner_screen(parent, personal_name):
     animation_thread = threading.Thread(target=animate_title, daemon=True)
     animation_thread.start()
 
+def player_process(player_name):
+    with open('/tmp/host_to_players', 'r') as h2p, open('/tmp/players_to_host', 'w') as p2h:
+        print(f"Spieler {player_name} ist bereit.")
+        p2h.write('READY\n')
+        p2h.flush()
+
+        while True:
+            start_message = h2p.readline().strip()
+            if start_message.startswith('START'):
+                _, xachse, yachse = start_message.split()
+                xachse = int(xachse)
+                yachse = int(yachse)
+                print(f"Spiel beginnt für {player_name}!")
+                run_game_gui(player_name, xachse, yachse)
+            elif start_message.startswith('WINNER'):
+                _, winner_name = start_message.split()
+                print(f"Spieler {winner_name} hat gewonnen!")
+                sys.exit()
+
+
+
+game_over = False
+winner_name = ""
+
 
 class GameApp:
 
@@ -223,7 +232,18 @@ class GameApp:
 
         self.root.mainloop()
 
+    def notify_other_players(self, winner_name):
+        with open('/tmp/host_to_players', 'w') as h2p:
+            h2p.write(f'WINNER {winner_name}\n')
+            h2p.flush()
+
     def button_click(self, button, x_wert, y_wert):
+
+        global game_over, winner_name
+        if game_over:
+            self.notify_other_players(winner_name)
+            return
+
         logs = read_json_log()
         if button.text() == "X":
             # Find the log entry corresponding to the button being reverted
@@ -251,6 +271,10 @@ class GameApp:
 
         # Check for bingo
         if pruefe_bingo(self.args.xachse, logs):
+            game_over = True
+            winner_name = self.player_name
+            self.notify_other_players(winner_name)
+
             gewinner_screen(self.root, self.player_name)
 
     def log_joker(self, button_text, x_wert, y_wert, auswahl_zeitpunkt):

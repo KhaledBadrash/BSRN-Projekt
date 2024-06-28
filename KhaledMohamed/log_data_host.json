@@ -2,54 +2,15 @@
     {
         "host_name": "HostName",
         "Event": "Spiel gestartet",
-        "max_spieler": 2,
-        "timestamp": "27-06-2024 23:12:07 Uhr"
+        "max_spieler": 3,
+        "timestamp": "28-06-2024 17:47:24 Uhr"
     },
     {
-        "host_name": "SpielerName1",
+        "host_name": "HostName",
         "JOKER": "X",
         "x_wert": 2,
         "y_wert": 2,
-        "auswahl_zeitpunkt": "27-06-2024 23:12:44 Uhr"
-    },
-    {
-        "host_name": "HostName",
-        "button_text": "X",
-        "x_wert": 0,
-        "y_wert": 0,
-        "auswahl_zeitpunkt": "27-06-2024 23:12:52 Uhr"
-    },
-    {
-        "host_name": "HostName",
-        "button_text": "X",
-        "x_wert": 0,
-        "y_wert": 1,
-        "auswahl_zeitpunkt": "27-06-2024 23:12:53 Uhr"
-    },
-    {
-        "host_name": "HostName",
-        "button_text": "X",
-        "x_wert": 0,
-        "y_wert": 2,
-        "auswahl_zeitpunkt": "27-06-2024 23:12:53 Uhr"
-    },
-    {
-        "host_name": "HostName",
-        "button_text": "X",
-        "x_wert": 0,
-        "y_wert": 3,
-        "auswahl_zeitpunkt": "27-06-2024 23:12:53 Uhr"
-    },
-    {
-        "host_name": "HostName",
-        "button_text": "X",
-        "x_wert": 0,
-        "y_wert": 4,
-        "auswahl_zeitpunkt": "27-06-2024 23:12:54 Uhr"
-    },
-    {
-        "host_name": "HostName",
-        "Event": "GEWONNEN",
-        "timestamp": "27-06-2024 23:12:54 Uhr"
+        "auswahl_zeitpunkt": "28-06-2024 17:50:02 Uhr"
     }
+] }
 ]

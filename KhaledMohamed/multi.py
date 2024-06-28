@@ -192,6 +192,7 @@ def gewinner_screen(parent, personal_name):
     animation_thread = threading.Thread(target=animate_title, daemon=True)
     animation_thread.start()
 
+game_over = False
 
 class GameApp:
 
@@ -224,6 +225,12 @@ class GameApp:
         self.root.mainloop()
 
     def button_click(self, button, x_wert, y_wert):
+
+        global game_over
+
+        if game_over:
+            return
+
         logs = read_json_log()
         if button.text() == "X":
             # Find the log entry corresponding to the button being reverted
@@ -251,6 +258,7 @@ class GameApp:
 
         # Check for bingo
         if pruefe_bingo(self.args.xachse, logs):
+            game_over = True
             gewinner_screen(self.root, self.player_name)
 
     def log_joker(self, button_text, x_wert, y_wert, auswahl_zeitpunkt):
