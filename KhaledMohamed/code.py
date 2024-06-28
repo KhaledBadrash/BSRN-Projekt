@@ -7,6 +7,9 @@ from multiprocessing import Process, Pipe
 import TermTk as ttk
 import time
 import sys
+import pty
+import subprocess
+
 
 
 def parse_args():
@@ -23,6 +26,12 @@ def parse_args():
 
     player_parser = subparsers.add_parser('join', help='Tritt einer bestehenden Runde bei')
     player_parser.add_argument('personal_name', help='Dein Name')
+
+    # Neuer Befehl zum Starten der GUI
+    gui_parser = subparsers.add_parser('run_gui', help='Starte die GUI')
+    gui_parser.add_argument('personal_name', help='Dein Name')
+    gui_parser.add_argument('xachse', type=int, help='Anzahl der Zeilen')
+    gui_parser.add_argument('yachse', type=int, help='Anzahl der Spalten')
 
     return parser.parse_args()
 
@@ -95,6 +104,8 @@ def player_process(player_name):
             xachse = int(xachse)
             yachse = int(yachse)
             print(f"Spiel beginnt für {player_name}!")
+
+            # Starten der GUI in einem separaten Python-Interpreter
             run_game_gui(player_name, xachse, yachse)
 
 
@@ -297,8 +308,11 @@ class GameApp:
         write_json_log(logs)
 
 
+import pty
+import os
+
+
 def run_game_gui(player_name, xachse, yachse):
-    # Daemonize TermTk initialization to ensure each process has its own context
     print(f"GameApp-Init-Prozess gestartet mit PID: {os.getpid()}")
     args = Namespace(
         woerter_pfad='woerter_datei',
@@ -307,8 +321,24 @@ def run_game_gui(player_name, xachse, yachse):
         personal_name=player_name,
         max_spieler=3
     )
-    app = GameApp(args, player_name)
-    app.run()
+
+    master_fd, slave_fd = pty.openpty()
+    pid = os.fork()
+
+    if pid == 0:  # Child process
+        os.close(master_fd)
+        os.dup2(slave_fd, sys.stdin.fileno())
+        os.dup2(slave_fd, sys.stdout.fileno())
+        os.dup2(slave_fd, sys.stderr.fileno())
+        os.execv(sys.executable, ['python3'] + ['code.py', 'run_gui', player_name, str(xachse), str(yachse)])
+    else:  # Parent process
+        os.close(slave_fd)
+        while True:
+            try:
+                os.read(master_fd, 1024)
+            except OSError:
+                break
+
 
 
 def main(args):
@@ -317,19 +347,21 @@ def main(args):
         clear_json_log()
         log_game_start(args.personal_name, args.max_spieler)
 
+        setup_pipes()  # Setup pipes before starting connections
         parent_conn, child_conn = Pipe()
         connection_process = Process(target=handle_host_connections, args=(args, child_conn))
         connection_process.start()
 
         if parent_conn.recv():
-            app = GameApp(args)
-            app.run()
+            # Starten der GUI in einem separaten Python-Interpreter
+            run_game_gui(args.personal_name, args.xachse, args.yachse)
 
         connection_process.join()
     elif args.command == 'join':
-        player_proc = Process(target=player_process, args=(args.personal_name,))
-        player_proc.start()
-        player_proc.join()
+        # Starten des Spielerprozesses
+        player_process(args.personal_name)
+    elif args.command == 'run_gui':
+        run_game_gui(args.personal_name, args.xachse, args.yachse)
     else:
         print("Kein gültiges Argument zum Starten oder Beitreten einer Runde angegeben.")
 

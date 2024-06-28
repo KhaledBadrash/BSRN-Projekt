@@ -3,14 +3,6 @@
         "host_name": "HostName",
         "Event": "Spiel gestartet",
         "max_spieler": 3,
-        "timestamp": "28-06-2024 17:47:24 Uhr"
-    },
-    {
-        "host_name": "HostName",
-        "JOKER": "X",
-        "x_wert": 2,
-        "y_wert": 2,
-        "auswahl_zeitpunkt": "28-06-2024 17:50:02 Uhr"
+        "timestamp": "28-06-2024 21:51:20 Uhr"
     }
-] }
 ]
