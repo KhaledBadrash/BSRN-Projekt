@@ -8,8 +8,6 @@ from multiprocessing import Process, Pipe #Prozessverwaltung und IPC
 import TermTk as ttk #GUI
 import time
 import threading
-import sys
-
 
 def parse_args():
     #Funktion für die Kommandozeilenargumente
@@ -187,7 +185,7 @@ class GameApp:
         self.woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
         self.root = ttk.TTk()
         self.original_texts = {}
-        print(f"DEBUG: GameApp initialisiert für {player_name}.")
+        print(f"GameApp initialisiert für {player_name}.")
 
 
     def run(self):
@@ -293,7 +291,6 @@ def run_game_gui(player_name, xachse, yachse):
 
 def main(args):
     #Hauptfunktion zur Steuerung des Spiels
-    print(f"DEBUG: main() aufgerufen mit args: {args}")
     if args.command == 'host' and args.newround:
         clear_json_log()
         log_game_start(args.personal_name, args.max_spieler)
