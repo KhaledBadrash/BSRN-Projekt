@@ -151,7 +151,7 @@ def gewinner_screen(parent, personal_name):
             win_root.setTitle(f"{colors[index % len(colors)]}Gewinner")
             name_root.setTitle(f"{colors[index % len(colors)]}{personal_name} ist der Gewinner!")
             index += 1
-            time.sleep(0.5)
+            time.sleep(0.1)
             parent.update()
 
     # Start the animation in a separate thread to keep the GUI responsive
