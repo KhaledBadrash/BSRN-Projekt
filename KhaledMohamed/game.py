@@ -273,7 +273,7 @@ if __name__ == "__main__":
     game()
 
 
-        #python3 bingo.py -n woerter_datei 3 3 khaled 2
+        #python3 bingo.py -n woerter 3 3 khaled 2
         #python3 bingo.py join SpielerName
 
 

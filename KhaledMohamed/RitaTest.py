@@ -209,5 +209,5 @@ if __name__ == "__main__":
     main(args)
 
 
-        #python3 code.py -n woerter_datei 3 3 khaled 2
+        #python3 code.py -n woerter 3 3 khaled 2
 
