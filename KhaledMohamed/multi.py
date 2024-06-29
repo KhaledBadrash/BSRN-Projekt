@@ -1,13 +1,14 @@
 import multiprocessing  #MP -> Verwaltung von Prozessen
-import os               #für Betriebssystem-Interaktionen
+import os  #für Betriebssystem-Interaktionen
 import random
-from argparse import ArgumentParser, Namespace #Verarbeitung von Kommandozeilenargumenten -> Terminal args
-import json   #Verarbeitung von JSON-Daten
-from datetime import datetime #Datums- und Zeitfunktionen
-from multiprocessing import Process, Pipe #Prozessverwaltung und IPC
-import TermTk as ttk #GUI
+from argparse import ArgumentParser, Namespace  #Verarbeitung von Kommandozeilenargumenten -> Terminal args
+import json  #Verarbeitung von JSON-Daten
+from datetime import datetime  #Datums- und Zeitfunktionen
+from multiprocessing import Process, Pipe  #Prozessverwaltung und IPC
+import TermTk as ttk  #GUI
 import time
 import threading
+
 
 def parse_args():
     #Funktion für die Kommandozeilenargumente
@@ -33,9 +34,9 @@ def parse_args():
 def lade_woerter(woerter_pfad, xachse, yachse):
     # Funktion zum Laden der Wörter aus der Wörter-Datei
     try:
-        with open(woerter_pfad, 'r', encoding='utf-8') as file: #Öffne die Wörterdatei
+        with open(woerter_pfad, 'r', encoding='utf-8') as file:  #Öffne die Wörterdatei
             woerter = [line.strip() for line in file.readlines()]  #Liest alle Zeilen und entfernt Leerzeichen
-            anz_woerter = xachse * yachse #Berechne die Anzahl der benötigten Wörter anhand der args --> Feldgroeße
+            anz_woerter = xachse * yachse  #Berechne die Anzahl der benötigten Wörter anhand der args --> Feldgroeße
             if len(woerter) < anz_woerter:
                 raise ValueError("Nicht genug Wörter in der Datei.")
             zufaellige_woerter = random.sample(woerter, anz_woerter)
@@ -44,55 +45,54 @@ def lade_woerter(woerter_pfad, xachse, yachse):
         raise FileNotFoundError('Die angegebene Datei konnte nicht gefunden werden')
 
 
-
-def setup_pipes(): # Funktion: Einrichtung der Pipes für die IPC
-    host_to_players_path = '/tmp/host_to_players' # Pfad für die Pipe vom Host zu den Spielern
+def setup_pipes():  # Funktion: Einrichtung der Pipes für die IPC
+    host_to_players_path = '/tmp/host_to_players'  # Pfad für die Pipe vom Host zu den Spielern
     players_to_host_path = '/tmp/players_to_host'  # Pfad für die Pipe von den Spielern zum Host
 
     if os.path.exists(host_to_players_path):
-        os.remove(host_to_players_path) # Entferne vorhandene Pipe, falls sie existiert [Fehlerbehebung]
+        os.remove(host_to_players_path)  # Entferne vorhandene Pipe, falls sie existiert [Fehlerbehebung]
     if os.path.exists(players_to_host_path):
-        os.remove(players_to_host_path) # Same[Fehlerbehebung]
+        os.remove(players_to_host_path)  # Same[Fehlerbehebung]
 
     os.mkfifo(host_to_players_path, mode=0o666)  #Erstelle FIFO-Pipe: Kommunikation vom Host zu den Spielern
     os.mkfifo(players_to_host_path, mode=0o666)  #Erstelle FIFO-Pipe: Kommunikation vom Host zu den Spielern
     #mode-Parameter definiert die Zugriffsberechtigungen:
-                                #0o666 --> 6 für Lesen und Schreiben
+    #0o666 --> 6 für Lesen und Schreiben
     #                                      4 für Lesen
     #                                      2 für Schreiben
 
 
 def cleanup_pipes():
     #Funktion: Entfernung der Pipes nach Benutzung [Fehlerbehebung]
-    os.unlink('/tmp/host_to_players') #Entferne: Pipe Host --> Spielern
-    os.unlink('/tmp/players_to_host') #Entferne: Pipe Spieler --> Host
+    os.unlink('/tmp/host_to_players')  #Entferne: Pipe Host --> Spielern
+    os.unlink('/tmp/players_to_host')  #Entferne: Pipe Spieler --> Host
+
 
 def read_json_log():
     #Funktion: liest die JSON-Logs
 
     try:
-        with open('log_data_host.json', 'r') as file: # Öffne die Log-Datei
+        with open('log_data_host.json', 'r') as file:  # Öffne die Log-Datei
             data = json.load(file)  # Lade die JSON-Daten
             if not isinstance(data, list):
                 return []
-            return data #Gib die Log-Daten zurück
+            return data  #Gib die Log-Daten zurück
     except (FileNotFoundError, json.JSONDecodeError):
-        return [] #return leere Liste, wenn die Datei nicht gefunden wird
-                    # oder ein JSON-Decode-Fehler auftritt
-
+        return []  #return leere Liste, wenn die Datei nicht gefunden wird
+        # oder ein JSON-Decode-Fehler auftritt
 
 
 def write_json_log(data):
     # Funktion: schreibt JSON-Logs
-    with open('log_data_host.json', 'w') as file: #Öffnet Log-Datei (w) zum Schreiben
-        json.dump(data, file, indent=4) # Schreibe die JSON-Daten mit Einrückungen
-                        #indent=4: Formatierung der JSON jedes verschachtelte Element
+    with open('log_data_host.json', 'w') as file:  #Öffnet Log-Datei (w) zum Schreiben
+        json.dump(data, file, indent=4)  # Schreibe die JSON-Daten mit Einrückungen
+        #indent=4: Formatierung der JSON jedes verschachtelte Element
         #                           um 4 Leerzeichen weiter eingerückt wird
 
 
 def clear_json_log():
     # Funktion: leert die Logs
-    write_json_log([]) # Leere Log durch leere Liste []
+    write_json_log([])  # Leere Log durch leere Liste []
 
 
 def log_game_start(host_name, max_spieler):
@@ -104,7 +104,7 @@ def log_game_start(host_name, max_spieler):
         'max_spieler': max_spieler,
         'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
     }
-    logs.append(start_data) # w Startdaten --> Log
+    logs.append(start_data)  # w Startdaten --> Log
     write_json_log(logs)
 
 
@@ -153,7 +153,8 @@ def winner_screen(parent, personal_name):
     log_win(personal_name)  # Loggen des Gewinnereignisses
     win_root.show()
 
-    name_root = ttk.TTkWindow(parent=parent, title=f"{personal_name} ist der Gewinner!", border=True, pos=(35, 20), size=(30, 10))
+    name_root = ttk.TTkWindow(parent=parent, title=f"{personal_name} ist der Gewinner!", border=True, pos=(35, 20),
+                              size=(30, 10))
     name_root.raiseWidget()
     name_root.show()
 
@@ -174,7 +175,9 @@ def winner_screen(parent, personal_name):
     animation_thread = threading.Thread(target=animate_title, daemon=True)
     animation_thread.start()
 
-game_over = False # globale Variable für die Prüfung ob das Spiel Vorbei ist
+
+game_over = False  # globale Variable für die Prüfung ob das Spiel Vorbei ist
+
 
 class GameApp:
 
@@ -186,7 +189,6 @@ class GameApp:
         self.root = ttk.TTk()
         self.original_texts = {}
         print(f"GameApp initialisiert für {player_name}.")
-
 
     def run(self):
         grid_layout = ttk.TTkGridLayout(parent=self.root)
@@ -215,20 +217,20 @@ class GameApp:
             return
 
         logs = read_json_log()
-        if button.text() == "---":
+        if button.text() == "---":  # prüft ob Button bereits markiert ist
             # Find the log entry corresponding to the button being reverted
             log_index = next(
                 (index for (index, d) in enumerate(logs) if d.get("x_wert") == x_wert and d.get("y_wert") == y_wert),
                 None)
             if log_index is not None and log_index == len(logs) - 1:
                 logs.pop(log_index)  # Remove the log entry
-                button.setText(self.original_texts[button])  # Set button text to original text
+                button.setText(self.original_texts[button])  # Setzt nach Klicken des Buttons auf Buzzword zurück
                 write_json_log(logs)
-        else:
-            original_text = button.text()
-            button.setText("---")
+        else:  # markiert den Button
+            #original_text = button.text()
+            button.setText("---")  #Setzt Buzzword auf "---" (markiert)
             auswahl_zeitpunkt = datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
-            self.log_data_json(original_text, x_wert, y_wert, auswahl_zeitpunkt)
+            #self.log_data_json(original_text, x_wert, y_wert, auswahl_zeitpunkt)
             log_data = {
                 'spieler_name': self.player_name,
                 'button_text': '---',
@@ -240,9 +242,11 @@ class GameApp:
             write_json_log(logs)
 
         # Check for bingo
-        if pruefe_bingo(self.args.xachse, logs):
-            game_over = True
-            winner_screen(self.root, self.player_name)
+        if pruefe_bingo(self.args.xachse,
+                        logs):  #prüft jedes Mal wenn die Funktion button_click aufgerufen wird, ob ein Bingo enstanden ist
+            game_over = True  #beendet das Spiel bei Bingo
+            winner_screen(self.root,
+                          self.player_name)  #Führt die Funktion winner_screen() aus, welches ein Gewinnerfenster anzeigt
 
     def log_joker(self, button_text, x_wert, y_wert, auswahl_zeitpunkt):
         if isinstance(button_text, ttk.TTkString):
@@ -289,26 +293,28 @@ def run_game_gui(player_name, xachse, yachse):
     app.run()
     print(f"GUI startet für Spieler {player_name} mit den Koordinaten ({xachse}, {yachse})")
 
+
 def main(args):
     #Hauptfunktion zur Steuerung des Spiels
     if args.command == 'host' and args.newround:
         clear_json_log()
         log_game_start(args.personal_name, args.max_spieler)
 
-        parent_conn, child_conn = Pipe() # Erstelle ein Pipe-Paar: ermöglicht bidirektionale Kommunikation zwischen Prozessen
-        connection_process = Process(target=handle_host_connections, args=(args, child_conn)) # Erstelle einen neuen Prozess durch die Klasse Process aus dem MP Modul
+        parent_conn, child_conn = Pipe()  # Erstelle ein Pipe-Paar: ermöglicht bidirektionale Kommunikation zwischen Prozessen
+        connection_process = Process(target=handle_host_connections, args=(
+        args, child_conn))  # Erstelle einen neuen Prozess durch die Klasse Process aus dem MP Modul
         multiprocessing.set_start_method('fork', force=True)  #jetzt wird geforkt, kein Multithreading
-                                                     #Setzt den Startmodus für Prozesse auf "fork" um threading zu vermeiden
-        connection_process.start() #Starte den Verbindungsprozess
+        #Setzt den Startmodus für Prozesse auf "fork" um threading zu vermeiden
+        connection_process.start()  #Starte den Verbindungsprozess
 
-        if parent_conn.recv(): # Parent (Host) wartet auf Nachricht vom Child/Verbindungsprozess
+        if parent_conn.recv():  # Parent (Host) wartet auf Nachricht vom Child/Verbindungsprozess
             app = GameApp(args, args.personal_name)
             app.run()
 
         connection_process.join()  #wartet bis der Verbindungsprozess zu Ende ist
         print("DEBUG: Host-Verbindungsprozess beendet.")
     elif args.command == 'join':
-        player_process(args.personal_name) # Starte den Spielerprozess
+        player_process(args.personal_name)  # Starte den Spielerprozess
     else:
         print("Kein gültiges Argument zum Starten oder Beitreten einer Runde angegeben.")
 
@@ -318,13 +324,13 @@ def handle_host_connections(args, conn):
     print(f"Host-Prozess gestartet mit PID: {os.getpid()}")
     anz_spieler = args.max_spieler
     print(f"DEBUG: Warte auf {anz_spieler} Spieler...")
-    setup_pipes() #Richte die Pipes ein
+    setup_pipes()  #Richte die Pipes ein
     connected_players = 0
 
     with open('/tmp/host_to_players', 'w') as h2p, open('/tmp/players_to_host', 'r') as p2h:
         while connected_players < anz_spieler:
             print("Warten auf READY-Nachricht von einem Spieler...")
-            line = p2h.readline().strip() # Lese eine Zeile von den Spielern
+            line = p2h.readline().strip()  # Lese eine Zeile von den Spielern
             if line == 'READY':
                 connected_players += 1
                 print(f"Spieler {connected_players} verbunden.")
@@ -332,15 +338,14 @@ def handle_host_connections(args, conn):
 
         print("Alle Spieler sind verbunden. Das Spiel beginnt!")
         for _ in range(anz_spieler):
-            h2p.write(f'START {args.xachse} {args.yachse}\n') # Sende START-Nachricht an die Spieler
-            h2p.flush() #schreibt alle gepufferten Daten sofort in die Pipe --> keine Verzögerung
+            h2p.write(f'START {args.xachse} {args.yachse}\n')  # Sende START-Nachricht an die Spieler
+            h2p.flush()  #schreibt alle gepufferten Daten sofort in die Pipe --> keine Verzögerung
             print(f"START-Nachricht an {connected_players} Spieler gesendet.")
 
         conn.send(True)  #Sende Nachricht an den Hauptprozess, dass das Spiel gestartet werden kann
 
     cleanup_pipes()  # Entferne die Pipes
-    conn.close() # Schließe die Pipe-Verbindung
-
+    conn.close()  # Schließe die Pipe-Verbindung
 
 
 def player_process(player_name):
@@ -357,7 +362,7 @@ def player_process(player_name):
     print(f"Spieler {player_name} ist bereit.")
 
     try:
-        p2h.write('READY\n') #Sende READY-Nachricht an den Host
+        p2h.write('READY\n')  #Sende READY-Nachricht an den Host
         p2h.flush()
         print("DEBUG: READY-Nachricht an Host gesendet.")
     except Exception as e:
@@ -377,7 +382,7 @@ def player_process(player_name):
                     xachse = int(xachse)
                     yachse = int(yachse)
                     print(f"DEBUG: Spiel beginnt für {player_name} mit den Koordinaten ({xachse}, {yachse})")
-                    run_game_gui(player_name, xachse, yachse) # Starte die Spiel-GUI
+                    run_game_gui(player_name, xachse, yachse)  # Starte die Spiel-GUI
                     break
             else:
                 print("Keine Nachricht empfangen. Warten auf Nachricht...")
