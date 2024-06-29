@@ -55,12 +55,13 @@ def setup_pipes():
 
     os.mkfifo(host_to_players_path, mode=0o666)
     os.mkfifo(players_to_host_path, mode=0o666)
-    print("Pipes erstellt.") #debug
+    print("Pipes erstellt.")  #debug
+
 
 def cleanup_pipes():
     os.unlink('/tmp/host_to_players')
     os.unlink('/tmp/players_to_host')
-    print("Pipes entfernt.") #debug
+    print("Pipes entfernt.")  #debug
 
 
 def read_json_log():
@@ -108,7 +109,7 @@ def log_win(host_name):
 
 def pruefe_bingo(max_feld, logs):
     marked_positions = [(log.get('x_wert'), log.get('y_wert')) for log in logs
-                        if log.get('button_text') == 'X' or log.get('JOKER') == 'X']
+                        if log.get('button_text') == '---' or log.get('JOKER') == '---']
 
     # Überprüft horizontale Linien
     for i in range(max_feld):
@@ -137,20 +138,21 @@ def gewinner_screen(parent, personal_name):
     log_win(personal_name)  # Loggen des Gewinnereignisses
     win_root.show()
 
-    name_root = ttk.TTkWindow(parent=parent, title=f"{personal_name} ist der Gewinner!", border=True, pos=(35, 20), size=(30, 10))
+    name_root = ttk.TTkWindow(parent=parent, title=f"{personal_name} ist der Gewinner!", border=True, pos=(35, 20),
+                              size=(30, 10))
     name_root.raiseWidget()
     name_root.show()
 
     # Animation: Change the title color repeatedly
     def animate_title():
-        colors = [ttk.TTkColor.RST, ttk.TTkColor.BOLD, ttk.TTkColor.UNDERLINE, ttk.TTkColor.RED, ttk.TTkColor.GREEN,
+        colors = [ttk.TTkColor.RST, ttk.TTkColor.BOLD, ttk.TTkColor.RED, ttk.TTkColor.UNDERLINE, ttk.TTkColor.GREEN,
                   ttk.TTkColor.YELLOW, ttk.TTkColor.BLUE, ttk.TTkColor.MAGENTA, ttk.TTkColor.CYAN, ttk.TTkColor.WHITE]
         index = 0
         while True:
             win_root.setTitle(f"{colors[index % len(colors)]}Gewinner")
             name_root.setTitle(f"{colors[index % len(colors)]}{personal_name} ist der Gewinner!")
             index += 1
-            time.sleep(0.5)
+            time.sleep(0.1)
             parent.update()
 
     # Start the animation in a separate thread to keep the GUI responsive
@@ -158,7 +160,9 @@ def gewinner_screen(parent, personal_name):
     animation_thread = threading.Thread(target=animate_title, daemon=True)
     animation_thread.start()
 
+
 game_over = False
+
 
 class GameApp:
 
@@ -171,7 +175,6 @@ class GameApp:
         self.original_texts = {}
         print(f"DEBUG: GameApp initialisiert für {player_name}.")
 
-
     def run(self):
         grid_layout = ttk.TTkGridLayout(parent=self.root)
         self.root.setLayout(grid_layout)
@@ -179,11 +182,10 @@ class GameApp:
         for i in range(self.args.xachse):
             for j in range(self.args.yachse):
                 if i == self.args.xachse // 2 and j == self.args.yachse // 2:
-                    button = ttk.TTkButton(parent=self.root, text='X', border=True, pos=(i, j))
-                    self.original_texts[button] = button.text()
+                    button = ttk.TTkButton(parent=self.root, text='---', border=True, pos=(i, j))
                     button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
                     grid_layout.addWidget(button, i, j)
-                    self.log_joker('X', i, j, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
+                    self.log_joker('---', i, j, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
                 else:
                     wort = self.woerter[i * self.args.yachse + j]
                     button = ttk.TTkButton(parent=self.root, text=wort, border=True, pos=(i, j))
@@ -201,7 +203,7 @@ class GameApp:
             return
 
         logs = read_json_log()
-        if button.text() == "X":
+        if button.text() == "---":
             # Find the log entry corresponding to the button being reverted
             log_index = next(
                 (index for (index, d) in enumerate(logs) if d.get("x_wert") == x_wert and d.get("y_wert") == y_wert),
@@ -210,14 +212,15 @@ class GameApp:
                 logs.pop(log_index)  # Remove the log entry
                 button.setText(self.original_texts[button])  # Set button text to original text
                 write_json_log(logs)
+                button.setText()
         else:
             original_text = button.text()
-            button.setText("X")
+            button.setText("---")
             auswahl_zeitpunkt = datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
             self.log_data_json(original_text, x_wert, y_wert, auswahl_zeitpunkt)
             log_data = {
                 'host_name': self.player_name,
-                'button_text': 'X',
+                'button_text': '---',
                 'x_wert': x_wert,
                 'y_wert': y_wert,
                 'auswahl_zeitpunkt': auswahl_zeitpunkt
@@ -275,6 +278,7 @@ def run_game_gui(player_name, xachse, yachse):
     app.run()
     print(f"GUI startet für Spieler {player_name} mit den Koordinaten ({xachse}, {yachse})")
 
+
 def main(args):
     print(f"DEBUG: main() aufgerufen mit args: {args}")
     if args.command == 'host' and args.newround:
@@ -326,7 +330,6 @@ def handle_host_connections(args, conn):
     cleanup_pipes()
     conn.close()
     print("DEBUG: Host-Prozess abgeschlossen und Pipe geschlossen.")
-
 
 
 def player_process(player_name):
@@ -391,9 +394,9 @@ if __name__ == "__main__":
     game()
 #python3 multi.py host -n woerter_datei 5 5 HostName 3
 
-#python3 multi.py join SpielerName1
-#python3 multi.py join SpielerName2
-#python3 multi.py join SpielerName3
+#python3 testtt.py join SpielerName1
+#python3 testtt.py join SpielerName2
+#python3 testtt.py join SpielerName3
 
 
 #pstree -p | grep python3
@@ -401,9 +404,8 @@ if __name__ == "__main__":
 # python3 testtt.py host -n woerter_datei 5 5 khaled 1
 
 
-
 #semap... pid vom host?-->
 
 #speicher jeden in eine JSON + rufe die hier auf
-                                #que- seramoph speichert liste an prozessen die eine datei zugreifen wollen first in first out
-                                #wenn kein parent und alle player gejoint
+#que- seramoph speichert liste an prozessen die eine datei zugreifen wollen first in first out
+#wenn kein parent und alle player gejoint
