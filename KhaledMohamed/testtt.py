@@ -55,12 +55,13 @@ def setup_pipes():
 
     os.mkfifo(host_to_players_path, mode=0o666)
     os.mkfifo(players_to_host_path, mode=0o666)
-    print("Pipes erstellt.") #debug
+    print("Pipes erstellt.")  #debug
+
 
 def cleanup_pipes():
     os.unlink('/tmp/host_to_players')
     os.unlink('/tmp/players_to_host')
-    print("Pipes entfernt.") #debug
+    print("Pipes entfernt.")  #debug
 
 
 def read_json_log():
@@ -137,20 +138,21 @@ def gewinner_screen(parent, personal_name):
     log_win(personal_name)  # Loggen des Gewinnereignisses
     win_root.show()
 
-    name_root = ttk.TTkWindow(parent=parent, title=f"{personal_name} ist der Gewinner!", border=True, pos=(35, 20), size=(30, 10))
+    name_root = ttk.TTkWindow(parent=parent, title=f"{personal_name} ist der Gewinner!", border=True, pos=(35, 20),
+                              size=(30, 10))
     name_root.raiseWidget()
     name_root.show()
 
     # Animation: Change the title color repeatedly
     def animate_title():
-        colors = [ttk.TTkColor.RST, ttk.TTkColor.BOLD, ttk.TTkColor.UNDERLINE, ttk.TTkColor.RED, ttk.TTkColor.GREEN,
+        colors = [ttk.TTkColor.RST, ttk.TTkColor.BOLD, ttk.TTkColor.RED, ttk.TTkColor.UNDERLINE, ttk.TTkColor.GREEN,
                   ttk.TTkColor.YELLOW, ttk.TTkColor.BLUE, ttk.TTkColor.MAGENTA, ttk.TTkColor.CYAN, ttk.TTkColor.WHITE]
         index = 0
         while True:
             win_root.setTitle(f"{colors[index % len(colors)]}Gewinner")
             name_root.setTitle(f"{colors[index % len(colors)]}{personal_name} ist der Gewinner!")
             index += 1
-            time.sleep(0.5)
+            time.sleep(0.1)
             parent.update()
 
     # Start the animation in a separate thread to keep the GUI responsive
@@ -158,7 +160,9 @@ def gewinner_screen(parent, personal_name):
     animation_thread = threading.Thread(target=animate_title, daemon=True)
     animation_thread.start()
 
+
 game_over = False
+
 
 class GameApp:
 
@@ -171,7 +175,6 @@ class GameApp:
         self.original_texts = {}
         print(f"DEBUG: GameApp initialisiert für {player_name}.")
 
-
     def run(self):
         grid_layout = ttk.TTkGridLayout(parent=self.root)
         self.root.setLayout(grid_layout)
@@ -180,7 +183,6 @@ class GameApp:
             for j in range(self.args.yachse):
                 if i == self.args.xachse // 2 and j == self.args.yachse // 2:
                     button = ttk.TTkButton(parent=self.root, text='X', border=True, pos=(i, j))
-                    self.original_texts[button] = button.text()
                     button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
                     grid_layout.addWidget(button, i, j)
                     self.log_joker('X', i, j, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
@@ -275,6 +277,7 @@ def run_game_gui(player_name, xachse, yachse):
     app.run()
     print(f"GUI startet für Spieler {player_name} mit den Koordinaten ({xachse}, {yachse})")
 
+
 def main(args):
     print(f"DEBUG: main() aufgerufen mit args: {args}")
     if args.command == 'host' and args.newround:
@@ -326,7 +329,6 @@ def handle_host_connections(args, conn):
     cleanup_pipes()
     conn.close()
     print("DEBUG: Host-Prozess abgeschlossen und Pipe geschlossen.")
-
 
 
 def player_process(player_name):
@@ -401,9 +403,8 @@ if __name__ == "__main__":
 # python3 testtt.py host -n woerter_datei 5 5 khaled 1
 
 
-
 #semap... pid vom host?-->
 
 #speicher jeden in eine JSON + rufe die hier auf
-                                #que- seramoph speichert liste an prozessen die eine datei zugreifen wollen first in first out
-                                #wenn kein parent und alle player gejoint
+#que- seramoph speichert liste an prozessen die eine datei zugreifen wollen first in first out
+#wenn kein parent und alle player gejoint
