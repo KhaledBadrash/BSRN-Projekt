@@ -1,20 +1,22 @@
-import multiprocessing
-import os
+import multiprocessing  #MP -> Verwaltung von Prozessen
+import os               #für Betriebssystem-Interaktionen
 import random
-from argparse import ArgumentParser, Namespace
-import json
-from datetime import datetime
-from multiprocessing import Process, Pipe
-import TermTk as ttk
+from argparse import ArgumentParser, Namespace #Verarbeitung von Kommandozeilenargumenten -> Terminal args
+import json   #Verarbeitung von JSON-Daten
+from datetime import datetime #Datums- und Zeitfunktionen
+from multiprocessing import Process, Pipe #Prozessverwaltung und IPC
+import TermTk as ttk #GUI
 import time
 import threading
 import sys
 
 
 def parse_args():
+    #Funktion für die Kommandozeilenargumente
     parser = ArgumentParser(description="Starte eine neue Spielrunde oder trete einer bestehenden Runde bei")
     subparsers = parser.add_subparsers(dest='command', required=True)
 
+    #Subparser für den Host
     host_parser = subparsers.add_parser('host', help='Starte eine neue Runde als Host')
     host_parser.add_argument('-n', '--newround', action='store_true', help="Startet eine neue Runde")
     host_parser.add_argument('woerter_pfad', help='Pfad zur Wörterliste')
@@ -23,6 +25,7 @@ def parse_args():
     host_parser.add_argument('personal_name', help='Name des Hosts')
     host_parser.add_argument('max_spieler', type=int, help='Maximale Anzahl an Spielern')
 
+    #Subparser für Spieler
     player_parser = subparsers.add_parser('join', help='Tritt einer bestehenden Runde bei')
     player_parser.add_argument('personal_name', help='Dein Name')
 
@@ -30,28 +33,28 @@ def parse_args():
 
 
 def lade_woerter(woerter_pfad, xachse, yachse):
+    # Funktion zum Laden der Wörter aus der Wörter-Datei
     try:
-        with open(woerter_pfad, 'r', encoding='utf-8') as file:
-            woerter = [line.strip() for line in file.readlines()]
-            anz_woerter = xachse * yachse
+        with open(woerter_pfad, 'r', encoding='utf-8') as file: #Öffne die Wörterdatei
+            woerter = [line.strip() for line in file.readlines()]  #Liest alle Zeilen und entfernt Leerzeichen
+            anz_woerter = xachse * yachse #Berechne die Anzahl der benötigten Wörter anhand der args --> Feldgroeße
             if len(woerter) < anz_woerter:
                 raise ValueError("Nicht genug Wörter in der Datei.")
             zufaellige_woerter = random.sample(woerter, anz_woerter)
             return zufaellige_woerter
     except FileNotFoundError:
         raise FileNotFoundError('Die angegebene Datei konnte nicht gefunden werden')
-    except ValueError as e:
-        raise ValueError(str(e))
 
 
-def setup_pipes():
-    host_to_players_path = '/tmp/host_to_players'
-    players_to_host_path = '/tmp/players_to_host'
+
+def setup_pipes(): # Funktion: Einrichtung der Pipes für die IPC
+    host_to_players_path = '/tmp/host_to_players' # Pfad für die Pipe vom Host zu den Spielern
+    players_to_host_path = '/tmp/players_to_host'  # Pfad für die Pipe von den Spielern zum Host
 
     if os.path.exists(host_to_players_path):
-        os.remove(host_to_players_path)
+        os.remove(host_to_players_path) # Entferne vorhandene Pipe, falls sie existiert [Fehlerbehebung]
     if os.path.exists(players_to_host_path):
-        os.remove(players_to_host_path)
+        os.remove(players_to_host_path) # Same[Fehlerbehebung]
 
     os.mkfifo(host_to_players_path, mode=0o666)
     os.mkfifo(players_to_host_path, mode=0o666)
@@ -99,7 +102,7 @@ def log_game_start(host_name, max_spieler):
 def log_win(host_name):
     logs = read_json_log()
     win_data = {
-        'host_name': host_name,
+        'Spieler_Name': host_name,
         'Event': "GEWONNEN",
         'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
     }
@@ -237,7 +240,7 @@ class GameApp:
 
         logs = read_json_log()
         logs.append({
-            'host_name': self.player_name,
+            'Spieler_Name': self.player_name,
             'JOKER': button_text,
             'x_wert': x_wert,
             'y_wert': y_wert,
