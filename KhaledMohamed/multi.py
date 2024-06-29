@@ -7,6 +7,9 @@ from datetime import datetime #Datums- und Zeitfunktionen
 from multiprocessing import Process, Pipe #Prozessverwaltung und IPC
 import TermTk as ttk #GUI
 import time
+import threading
+import sys
+
 
 def parse_args():
     #Funktion für die Kommandozeilenargumente
@@ -109,7 +112,7 @@ def log_win(host_name):
 
 def pruefe_bingo(max_feld, logs):
     marked_positions = [(log.get('x_wert'), log.get('y_wert')) for log in logs
-                        if log.get('button_text') == '---' or log.get('JOKER') == '---']
+                        if log.get('button_text') == 'X' or log.get('JOKER') == 'X']
 
     # Überprüft horizontale Linien
     for i in range(max_feld):
@@ -180,11 +183,11 @@ class GameApp:
         for i in range(self.args.xachse):
             for j in range(self.args.yachse):
                 if i == self.args.xachse // 2 and j == self.args.yachse // 2:
-                    button = ttk.TTkButton(parent=self.root, text='---', border=True, pos=(i, j))
+                    button = ttk.TTkButton(parent=self.root, text='X', border=True, pos=(i, j))
                     self.original_texts[button] = button.text()
                     button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
                     grid_layout.addWidget(button, i, j)
-                    self.log_joker('---', i, j, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
+                    self.log_joker('X', i, j, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
                 else:
                     wort = self.woerter[i * self.args.yachse + j]
                     button = ttk.TTkButton(parent=self.root, text=wort, border=True, pos=(i, j))
@@ -202,7 +205,7 @@ class GameApp:
             return
 
         logs = read_json_log()
-        if button.text() == "---":
+        if button.text() == "X":
             # Find the log entry corresponding to the button being reverted
             log_index = next(
                 (index for (index, d) in enumerate(logs) if d.get("x_wert") == x_wert and d.get("y_wert") == y_wert),
@@ -213,12 +216,12 @@ class GameApp:
                 write_json_log(logs)
         else:
             original_text = button.text()
-            button.setText("---")
+            button.setText("X")
             auswahl_zeitpunkt = datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
             self.log_data_json(original_text, x_wert, y_wert, auswahl_zeitpunkt)
             log_data = {
                 'host_name': self.player_name,
-                'button_text': '---',
+                'button_text': 'X',
                 'x_wert': x_wert,
                 'y_wert': y_wert,
                 'auswahl_zeitpunkt': auswahl_zeitpunkt
