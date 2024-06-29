@@ -8,7 +8,7 @@ from multiprocessing import Process, Pipe
 import TermTk as ttk
 import time
 import threading
-import sys #
+import sys
 
 
 def parse_args():
@@ -109,7 +109,7 @@ def log_win(host_name):
 
 def pruefe_bingo(max_feld, logs):
     marked_positions = [(log.get('x_wert'), log.get('y_wert')) for log in logs
-                        if log.get('button_text') == 'X' or log.get('JOKER') == 'X']
+                        if log.get('button_text') == '---' or log.get('JOKER') == '---']
 
     # Überprüft horizontale Linien
     for i in range(max_feld):
@@ -182,10 +182,10 @@ class GameApp:
         for i in range(self.args.xachse):
             for j in range(self.args.yachse):
                 if i == self.args.xachse // 2 and j == self.args.yachse // 2:
-                    button = ttk.TTkButton(parent=self.root, text='X', border=True, pos=(i, j))
+                    button = ttk.TTkButton(parent=self.root, text='---', border=True, pos=(i, j))
                     button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
                     grid_layout.addWidget(button, i, j)
-                    self.log_joker('X', i, j, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
+                    self.log_joker('---', i, j, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
                 else:
                     wort = self.woerter[i * self.args.yachse + j]
                     button = ttk.TTkButton(parent=self.root, text=wort, border=True, pos=(i, j))
@@ -203,7 +203,7 @@ class GameApp:
             return
 
         logs = read_json_log()
-        if button.text() == "X":
+        if button.text() == "---":
             # Find the log entry corresponding to the button being reverted
             log_index = next(
                 (index for (index, d) in enumerate(logs) if d.get("x_wert") == x_wert and d.get("y_wert") == y_wert),
@@ -212,14 +212,15 @@ class GameApp:
                 logs.pop(log_index)  # Remove the log entry
                 button.setText(self.original_texts[button])  # Set button text to original text
                 write_json_log(logs)
+                button.setText()
         else:
             original_text = button.text()
-            button.setText("X")
+            button.setText("---")
             auswahl_zeitpunkt = datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
             self.log_data_json(original_text, x_wert, y_wert, auswahl_zeitpunkt)
             log_data = {
                 'host_name': self.player_name,
-                'button_text': 'X',
+                'button_text': '---',
                 'x_wert': x_wert,
                 'y_wert': y_wert,
                 'auswahl_zeitpunkt': auswahl_zeitpunkt
@@ -393,9 +394,9 @@ if __name__ == "__main__":
     game()
 #python3 multi.py host -n woerter_datei 5 5 HostName 3
 
-#python3 multi.py join SpielerName1
-#python3 multi.py join SpielerName2
-#python3 multi.py join SpielerName3
+#python3 testtt.py join SpielerName1
+#python3 testtt.py join SpielerName2
+#python3 testtt.py join SpielerName3
 
 
 #pstree -p | grep python3
