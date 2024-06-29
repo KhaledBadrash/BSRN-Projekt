@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 import random
 from argparse import ArgumentParser, Namespace
@@ -54,47 +55,12 @@ def setup_pipes():
 
     os.mkfifo(host_to_players_path, mode=0o666)
     os.mkfifo(players_to_host_path, mode=0o666)
-
+    print("Pipes erstellt.") #debug
 
 def cleanup_pipes():
     os.unlink('/tmp/host_to_players')
     os.unlink('/tmp/players_to_host')
-
-
-def handle_host_connections(args, conn):
-    anz_spieler = args.max_spieler
-    print(f"Warte auf {anz_spieler} Spieler...")
-    setup_pipes()
-    with open('/tmp/host_to_players', 'w') as h2p, open('/tmp/players_to_host', 'r') as p2h:
-        connected_players = 0
-        while connected_players < args.max_spieler:
-            line = p2h.readline().strip()
-            if line == 'READY':
-                connected_players += 1
-                print(f"Spieler {connected_players} verbunden.")
-                print(f"Warte auf {anz_spieler-1} Spieler...")
-                anz_spieler = anz_spieler - 1
-
-        print("Alle Spieler sind verbunden. Das Spiel beginnt!")
-        h2p.write(f'START {args.xachse} {args.yachse}\n')
-        h2p.flush()
-        conn.send(True)
-    cleanup_pipes()
-
-
-def player_process(player_name):
-    with open('/tmp/host_to_players', 'r') as h2p, open('/tmp/players_to_host', 'w') as p2h:
-        print(f"Spieler {player_name} ist bereit.")
-        p2h.write('READY\n')
-        p2h.flush()
-
-        start_message = h2p.readline().strip()
-        if start_message.startswith('START'):
-            _, xachse, yachse = start_message.split()
-            xachse = int(xachse)
-            yachse = int(yachse)
-            print(f"Spiel beginnt für {player_name}!")
-            run_game_gui(player_name, xachse, yachse)
+    print("Pipes entfernt.") #debug
 
 
 def read_json_log():
@@ -198,10 +164,13 @@ class GameApp:
 
     def __init__(self, args, player_name=None):
         self.args = args
+        self.player_name = player_name
         self.player_name = player_name or args.personal_name
         self.woerter = lade_woerter(args.woerter_pfad, args.xachse, args.yachse)
         self.root = ttk.TTk()
         self.original_texts = {}
+        print(f"DEBUG: GameApp initialisiert für {player_name}.")
+
 
     def run(self):
         grid_layout = ttk.TTkGridLayout(parent=self.root)
@@ -304,28 +273,115 @@ def run_game_gui(player_name, xachse, yachse):
     )
     app = GameApp(args, player_name)
     app.run()
-
+    print(f"GUI startet für Spieler {player_name} mit den Koordinaten ({xachse}, {yachse})")
 
 def main(args):
+    print(f"DEBUG: main() aufgerufen mit args: {args}")
     if args.command == 'host' and args.newround:
         clear_json_log()
         log_game_start(args.personal_name, args.max_spieler)
 
         parent_conn, child_conn = Pipe()
         connection_process = Process(target=handle_host_connections, args=(args, child_conn))
+        multiprocessing.set_start_method('fork', force=True)  # jetzt wird geforkt, kein Multithreading
         connection_process.start()
 
         if parent_conn.recv():
-            app = GameApp(args)
+            print("DEBUG: Verbindung vom Host empfangen, Spiel wird gestartet.")
+            app = GameApp(args, args.personal_name)
             app.run()
 
         connection_process.join()
+        print("DEBUG: Host-Verbindungsprozess beendet.")
     elif args.command == 'join':
         player_process(args.personal_name)
     else:
         print("Kein gültiges Argument zum Starten oder Beitreten einer Runde angegeben.")
 
 
+def handle_host_connections(args, conn):
+    print(f"DEBUG: Host-Prozess gestartet mit PID: {os.getpid()}")
+    anz_spieler = args.max_spieler
+    print(f"DEBUG: Warte auf {anz_spieler} Spieler...")
+    setup_pipes()
+    connected_players = 0
+
+    with open('/tmp/host_to_players', 'w') as h2p, open('/tmp/players_to_host', 'r') as p2h:
+        while connected_players < anz_spieler:
+            print("DEBUG: Warten auf READY-Nachricht von einem Spieler...")
+            line = p2h.readline().strip()
+            if line == 'READY':
+                connected_players += 1
+                print(f"DEBUG: Spieler {connected_players} verbunden.")
+                print(f"DEBUG: Warte auf {anz_spieler - connected_players} Spieler...")
+
+        print("DEBUG: Alle Spieler sind verbunden. Das Spiel beginnt!")
+        for _ in range(anz_spieler):
+            h2p.write(f'START {args.xachse} {args.yachse}\n')
+            h2p.flush()
+            print("DEBUG: START-Nachricht an Spieler gesendet.")
+
+        conn.send(True)
+
+    cleanup_pipes()
+    conn.close()
+    print("DEBUG: Host-Prozess abgeschlossen und Pipe geschlossen.")
+
+
+
+def player_process(player_name):
+    print(f"DEBUG: Spieler-Prozess gestartet mit PID: {os.getpid()}")
+
+    try:
+        h2p = open('/tmp/host_to_players', 'r')
+        p2h = open('/tmp/players_to_host', 'w')
+        print("DEBUG: Pipes erfolgreich geöffnet.")
+    except Exception as e:
+        print(f"DEBUG: Fehler beim Öffnen der Pipes: {e}")
+        return
+
+    print(f"DEBUG: Spieler {player_name} ist bereit.")
+
+    try:
+        p2h.write('READY\n')
+        p2h.flush()
+        print("DEBUG: READY-Nachricht an Host gesendet.")
+    except Exception as e:
+        print(f"DEBUG: Fehler beim Senden der READY-Nachricht: {e}")
+        h2p.close()
+        p2h.close()
+        return
+
+    while True:
+        print("DEBUG: Warten auf START-Nachricht vom Host...")
+        try:
+            start_message = h2p.readline().strip()
+            if start_message:
+                print(f"DEBUG: Nachricht vom Host empfangen: {start_message}")
+                if start_message.startswith('START'):
+                    _, xachse, yachse = start_message.split()
+                    xachse = int(xachse)
+                    yachse = int(yachse)
+                    print(f"DEBUG: Spiel beginnt für {player_name} mit den Koordinaten ({xachse}, {yachse})")
+                    run_game_gui(player_name, xachse, yachse)
+                    break
+            else:
+                print("DEBUG: Keine Nachricht empfangen. Warten auf Nachricht...")
+                time.sleep(1)
+        except Exception as e:
+            print(f"DEBUG: Fehler beim Lesen der START-Nachricht: {e}")
+            break
+
+    try:
+        h2p.close()
+        p2h.close()
+        print(f"DEBUG: Pipes für Spieler {player_name} geschlossen.")
+    except Exception as e:
+        print(f"DEBUG: Fehler beim Schließen der Pipes: {e}")
+
+
+#refresh timer einbauen
+# alle müssen am host hängen-->TBD
 def game():
     args = parse_args()
     main(args)
@@ -343,3 +399,11 @@ if __name__ == "__main__":
 #pstree -p | grep python3
 #cd KhaledMohamed
 # python3 testtt.py host -n woerter_datei 5 5 khaled 1
+
+
+
+#semap... pid vom host?-->
+
+#speicher jeden in eine JSON + rufe die hier auf
+                                #que- seramoph speichert liste an prozessen die eine datei zugreifen wollen first in first out
+                                #wenn kein parent und alle player gejoint

@@ -323,11 +323,11 @@ def game():
 if __name__ == "__main__":
     game()
 
-#python3 multi.py host -n woerter_datei 5 5 HostName 3
+#python3 animation.py host -n woerter_datei 5 5 HostName 1
 
-#python3 multi.py join SpielerName1
-#python3 multi.py join SpielerName2
-#python3 multi.py join SpielerName3
+#python3 animation.py join SpielerName1
+#python3 animation.py join SpielerName2
+#python3 animation.py join SpielerName3
 
 
 #pstree -p | grep python3
