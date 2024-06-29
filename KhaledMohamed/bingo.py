@@ -7,8 +7,7 @@ from datetime import datetime
 from multiprocessing import Process, Pipe
 import TermTk as ttk
 import time
-import threading
-import sys
+
 
 
 def parse_args():
