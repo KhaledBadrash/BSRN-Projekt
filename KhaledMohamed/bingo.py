@@ -7,7 +7,8 @@ from datetime import datetime
 from multiprocessing import Process, Pipe
 import TermTk as ttk
 import time
-
+import threading
+import sys
 
 
 def parse_args():
@@ -150,7 +151,7 @@ def gewinner_screen(parent, personal_name):
             win_root.setTitle(f"{colors[index % len(colors)]}Gewinner")
             name_root.setTitle(f"{colors[index % len(colors)]}{personal_name} ist der Gewinner!")
             index += 1
-            time.sleep(0.5)
+            time.sleep(0.1)
             parent.update()
 
     # Start the animation in a separate thread to keep the GUI responsive
@@ -180,8 +181,6 @@ class GameApp:
             for j in range(self.args.yachse):
                 if i == self.args.xachse // 2 and j == self.args.yachse // 2:
                     button = ttk.TTkButton(parent=self.root, text='X', border=True, pos=(i, j))
-                    self.original_texts[button] = button.text()
-                    button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))
                     grid_layout.addWidget(button, i, j)
                     self.log_joker('X', i, j, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))
                 else:
