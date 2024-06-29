@@ -57,6 +57,7 @@ def setup_pipes():
     os.mkfifo(players_to_host_path, mode=0o666)
     print("Pipes erstellt.") #debug
 
+
 def cleanup_pipes():
     os.unlink('/tmp/host_to_players')
     os.unlink('/tmp/players_to_host')
@@ -269,7 +270,7 @@ def run_game_gui(player_name, xachse, yachse):
         xachse=xachse,
         yachse=yachse,
         personal_name=player_name,
-        max_spieler=3
+        max_spieler=3 #hardcode
     )
     app = GameApp(args, player_name)
     app.run()
