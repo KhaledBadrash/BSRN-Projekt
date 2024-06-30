@@ -300,6 +300,7 @@ def run_game_gui(player_name, xachse, yachse):
 
 
 def main(args):
+    print(f"Main-Prozess gestartet mit PID: {os.getpid()}")
     #Hauptfunktion zur Steuerung des Spiels
     if args.command == 'host' and args.newround:
         clear_json_log()
