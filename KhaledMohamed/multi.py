@@ -318,7 +318,7 @@ def main(args):
             app.run()
 
         connection_process.join()  #wartet bis der Verbindungsprozess zu Ende ist
-        print("DEBUG: Host-Verbindungsprozess beendet.")
+        print("Host-Verbindungsprozess beendet.")
     elif args.command == 'join':
         player_process(args.personal_name)  # Starte den Spielerprozess
     else:
@@ -370,15 +370,15 @@ def player_process(player_name):
     try:
         p2h.write('READY\n')  #Sende READY-Nachricht an den Host
         p2h.flush()
-        print("DEBUG: READY-Nachricht an Host gesendet.")
+        print("READY-Nachricht an Host gesendet.")
     except Exception as e:
-        print(f"DEBUG: Fehler beim Senden der READY-Nachricht: {e}")
+        print(f"Fehler beim Senden der READY-Nachricht: {e}")
         h2p.close()
         p2h.close()
         return
 
     while True:
-        print("DEBUG: Warten auf START-Nachricht vom Host...")
+        print("Warten auf START-Nachricht vom Host...")
         try:
             start_message = h2p.readline().strip()  #Lese START-Nachricht vom Host
             if start_message:
@@ -387,7 +387,7 @@ def player_process(player_name):
                     _, xachse, yachse = start_message.split()
                     xachse = int(xachse)
                     yachse = int(yachse)
-                    print(f"DEBUG: Spiel beginnt für {player_name} mit den Koordinaten ({xachse}, {yachse})")
+                    print(f"Spiel beginnt für {player_name} mit den Koordinaten ({xachse}, {yachse})")
                     run_game_gui(player_name, xachse, yachse)  # Starte die Spiel-GUI
                     break
             else:
@@ -414,7 +414,7 @@ if __name__ == "__main__":
 
 #python3 multi.py host -n woerter_datei 5 5 HostName 3
 
-#python3 multi.py join SpielerName1
+#killall -9 python3
 #python3 multi.py join SpielerName2
 #python3 multi.py join SpielerName3
 
