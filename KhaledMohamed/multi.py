@@ -268,7 +268,7 @@ class GameApp:
 
         logs = read_json_log()
         logs.append({
-            'host_name': self.player_name,
+            'Name': self.player_name,
             'button_text': button_text,
             'x_wert': x_wert,
             'y_wert': y_wert,
@@ -338,8 +338,8 @@ def handle_host_connections(args, conn):
 
         conn.send(True)  #Sende Nachricht an den Hauptprozess, dass das Spiel gestartet werden kann
 
-    cleanup_pipes()  # Entferne die Pipes
-    conn.close() # Schließe die Pipe-Verbindung
+    cleanup_pipes()  #Entferne die Pipes
+    conn.close() #Schließe die Pipe-Verbindung
 
 
 

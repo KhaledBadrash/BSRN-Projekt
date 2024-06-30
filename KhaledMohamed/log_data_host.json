@@ -1,30 +1,49 @@
 [
     {
-        "Spieler_Name": "Spie",
-        "JOKER": "---",
-        "x_wert": 2,
-        "y_wert": 2,
-        "auswahl_zeitpunkt": "29-06-2024 22:25:05 Uhr"
-    },
-    {
         "Spieler_Name": "HostName",
         "JOKER": "---",
         "x_wert": 2,
         "y_wert": 2,
-        "auswahl_zeitpunkt": "29-06-2024 22:25:05 Uhr"
+        "auswahl_zeitpunkt": "29-06-2024 23:20:35 Uhr"
+    },
+    {
+        "Spieler_Name": "Spierdsds",
+        "JOKER": "---",
+        "x_wert": 2,
+        "y_wert": 2,
+        "auswahl_zeitpunkt": "29-06-2024 23:20:35 Uhr"
     },
     {
         "spieler_name": "Spierdsds",
         "button_text": "---",
         "x_wert": 0,
         "y_wert": 2,
-        "auswahl_zeitpunkt": "29-06-2024 22:25:10 Uhr"
+        "auswahl_zeitpunkt": "29-06-2024 23:20:45 Uhr"
     },
     {
         "spieler_name": "Spierdsds",
         "button_text": "---",
         "x_wert": 1,
         "y_wert": 2,
-        "auswahl_zeitpunkt": "29-06-2024 22:25:11 Uhr"
+        "auswahl_zeitpunkt": "29-06-2024 23:20:46 Uhr"
+    },
+    {
+        "spieler_name": "Spierdsds",
+        "button_text": "---",
+        "x_wert": 3,
+        "y_wert": 2,
+        "auswahl_zeitpunkt": "29-06-2024 23:20:47 Uhr"
+    },
+    {
+        "spieler_name": "Spierdsds",
+        "button_text": "---",
+        "x_wert": 4,
+        "y_wert": 2,
+        "auswahl_zeitpunkt": "29-06-2024 23:20:47 Uhr"
+    },
+    {
+        "Spieler_Name": "Spierdsds",
+        "Event": "GEWONNEN",
+        "timestamp": "29-06-2024 23:20:47 Uhr"
     }
 ]
