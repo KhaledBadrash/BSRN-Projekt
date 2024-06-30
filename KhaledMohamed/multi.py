@@ -42,7 +42,8 @@ def lade_woerter(woerter_pfad, xachse, yachse):
             zufaellige_woerter = random.sample(woerter, anz_woerter)  #ruft ein zufälliges Wort aus der Datei aus
             return zufaellige_woerter
     except FileNotFoundError:
-        raise FileNotFoundError('Die angegebene Datei konnte nicht gefunden werden')  #Exception falls Datei nicht gefunden wurde
+        raise FileNotFoundError(
+            'Die angegebene Datei konnte nicht gefunden werden')  #Exception falls Datei nicht gefunden wurde
 
 
 def setup_pipes():  # Funktion: Einrichtung der Pipes für die IPC
@@ -149,7 +150,7 @@ def pruefe_bingo(max_feld, logs):  # Überprüft auf Bingo
 
 def winner_screen(parent, personal_name):
     # Funktion: Zeigt den Gewinnerscreen an
-    win_root = ttk.TTkWindow(parent=parent, title="Gewinner", border=True, pos=(35, 5), size=(30, 10))
+    win_root = ttk.TTkWindow(parent=parent, title="Gewinner", border=True, pos=(35, 5), size=(30, 10))  # Erstellt das Gewinner-Fenster
     win_root.raiseWidget()
     log_win(personal_name)  # Loggen des Gewinnereignisses
     win_root.show()  # zeigt das Fenster
@@ -204,14 +205,18 @@ class GameApp:
             for j in range(self.args.yachse):  # Element j repräsentiert die Spaltenposition
                 # if-Anweisung zur Überprüfung, ob ein Joker hinzugefügt werden soll
                 if i == self.args.xachse // 2 and j == self.args.yachse // 2:
-                    button = ttk.TTkButton(parent=self.root, text='---', border=True, pos=(i, j))  # Erstellt Button (markiert) an gegebener Position
+                    button = ttk.TTkButton(parent=self.root, text='---', border=True,
+                                           pos=(i, j))  # Erstellt Button (markiert) an gegebener Position
                     grid_layout.addWidget(button, i, j)  # Ordnet die Buttons nach dem Grid-Layout an
-                    self.log_joker('---', i, j, datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))  # Dokumentiert den Joker
+                    self.log_joker('---', i, j,
+                                   datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr'))  # Dokumentiert den Joker
                 else:
-                    wort = self.woerter[i * self.args.yachse + j]  # Gibt ein zufälliges Buzzword aus, welcher als Text im Button übernommen wird
+                    wort = self.woerter[
+                        i * self.args.yachse + j]  # Gibt ein zufälliges Buzzword aus, welcher als Text im Button übernommen wird
                     button = ttk.TTkButton(parent=self.root, text=wort, border=True, pos=(i, j))
                     self.original_texts[button] = button.text()  # Speichert Buzzword im Array
-                    button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x, y))  # Führt Klassenmethode button_click aus, nach Anklicken
+                    button.clicked.connect(lambda btn=button, x=i, y=j: self.button_click(btn, x,
+                                                                                          y))  # Führt Klassenmethode button_click aus, nach Anklicken
                     grid_layout.addWidget(button, i, j)
 
         self.root.mainloop()
@@ -227,7 +232,9 @@ class GameApp:
         #  if-Anweisung prüft, ob Feld bereits markiert wurde oder nicht
         if button.text() == "---":
             # Sucht den Log-Eintrag der Markierung
-            log_index = next((index for (index, d) in enumerate(logs) if d.get("x_wert") == x_wert and d.get("y_wert") == y_wert), None)
+            log_index = next(
+                (index for (index, d) in enumerate(logs) if d.get("x_wert") == x_wert and d.get("y_wert") == y_wert),
+                None)
             if log_index is not None and log_index == len(logs) - 1:
                 logs.pop(log_index)  # Löscht den Logeintrag, wenn vorhanden
                 button.setText(self.original_texts[button])  # Setzt den Button auf Original-Buzzword zurück
@@ -268,6 +275,7 @@ class GameApp:
             'auswahl_zeitpunkt': auswahl_zeitpunkt
         })
         write_json_log(logs)
+
     # Loggt den Namen des Spielers und das markierte Feld
     def log_data_json(self, button_text, x_wert, y_wert, auswahl_zeitpunkt):
         if isinstance(button_text, ttk.TTkString):
@@ -308,7 +316,7 @@ def main(args):
 
         parent_conn, child_conn = Pipe()  # Erstelle ein Pipe-Paar: ermöglicht bidirektionale Kommunikation zwischen Prozessen
         connection_process = Process(target=handle_host_connections, args=(
-        args, child_conn))  # Erstelle einen neuen Prozess durch die Klasse Process aus dem MP Modul
+            args, child_conn))  # Erstelle einen neuen Prozess durch die Klasse Process aus dem MP Modul
         multiprocessing.set_start_method('fork', force=True)  #jetzt wird geforkt, kein Multithreading
         #Setzt den Startmodus für Prozesse auf "fork" um threading zu vermeiden
         connection_process.start()  #Starte den Verbindungsprozess
