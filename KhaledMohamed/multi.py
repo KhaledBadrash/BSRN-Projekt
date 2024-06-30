@@ -329,7 +329,7 @@ def handle_host_connections(args, conn):
     # Funktion zur Handhabung der Host-Verbindungen
     print(f"Host-Prozess gestartet mit PID: {os.getpid()}")
     anz_spieler = args.max_spieler
-    print(f"DEBUG: Warte auf {anz_spieler} Spieler...")
+    print(f"Warte auf {anz_spieler} Spieler...")
     setup_pipes()  #Richte die Pipes ein
     connected_players = 0
 
