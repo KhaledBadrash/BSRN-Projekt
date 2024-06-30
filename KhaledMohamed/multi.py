@@ -105,7 +105,7 @@ def log_game_start(host_name, max_spieler):
         'max_spieler': max_spieler,
         'timestamp': datetime.now().strftime('%d-%m-%Y %H:%M:%S Uhr')
     }
-    logs.append(start_data)  # w Startdaten --> Log #? Liest die erstellte JSON
+    logs.append(start_data)  # w Startdaten --> Log  Liest die erstellte JSON
     write_json_log(logs)
 
 
