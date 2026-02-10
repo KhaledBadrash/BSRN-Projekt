@@ -1,4 +1,4 @@
-# BSRN Projekt – Buzzword-Bingo (Werkstück A, Alternative 3)
+# BSRN Projekt – Buzzword-Bingo (Werkstück A, Alternative 3) Bewertung 50/50 Punkten
 
 Dieses Projekt implementiert ein **Mehrspieler-Buzzword-Bingo** mit **Multiprocessing** (Host + Spielerprozesse) und **Interprozesskommunikation (IPC)** über **benannte Pipes (FIFOs)**.  
 Ein **Host-Prozess** orchestriert das Spiel, Spieler **joinen** als eigene Prozesse. Die UI ist eine **Terminal-GUI** (PyTermTK) mit klickbaren Feldern; nach jedem Klick wird der **Bingo-Status** (horizontal/vertikal/diagonal) geprüft. Spielereignisse werden als **JSON** geloggt.
